@@ -16,6 +16,9 @@ export type Relation = "supports" | "contradicts" | "silent";
 
 export type VerseJudgment = {
   id: string;
+  book: string;
+  chapter: number;
+  verse: number;
   displayRef: string;
   text: string;
   relation: Relation;

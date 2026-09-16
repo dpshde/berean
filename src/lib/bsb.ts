@@ -69,6 +69,17 @@ export function displayRef(verse: Pick<Verse, "book" | "chapter" | "verse">): st
   return `${verse.book} ${verse.chapter}:${verse.verse}`;
 }
 
+/** Range citation: `John 3:16` or `John 3:16–18`. Same-chapter only. */
+export function displayRangeRef(
+  start: Pick<Verse, "book" | "chapter" | "verse">,
+  end: Pick<Verse, "book" | "chapter" | "verse"> = start,
+): string {
+  if (start.book !== end.book || start.chapter !== end.chapter || start.verse === end.verse) {
+    return displayRef(start);
+  }
+  return `${start.book} ${start.chapter}:${start.verse}–${end.verse}`;
+}
+
 export function getVerse(id: string): Verse | undefined {
   const all = loadVerses();
   const index = byId?.get(id);

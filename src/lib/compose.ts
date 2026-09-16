@@ -1,3 +1,4 @@
+import { stitchJudgments } from "./stitch.ts";
 import type { BeamChip, Candidate, ClaimVerdict, Relation, Verdict, VerseJudgment } from "./types.ts";
 
 export const SUPPORT_THRESHOLD = 0.5;
@@ -44,6 +45,9 @@ export function composeVerdict(
     };
     return {
       id: candidate.id,
+      book: candidate.book,
+      chapter: candidate.chapter,
+      verse: candidate.verse,
       displayRef: candidate.displayRef,
       text: candidate.text,
       relation: asRelation(answer?.choice ?? "silent"),
@@ -52,8 +56,12 @@ export function composeVerdict(
     };
   });
 
-  const evidence = judgments
-    .filter((judgment) => judgment.relation !== "silent" || evidenceScore(judgment, verdict) > 0.15)
+  const evidence = stitchJudgments(
+    judgments.filter(
+      (judgment) => judgment.relation !== "silent" || evidenceScore(judgment, verdict) > 0.15,
+    ),
+    (judgment) => evidenceScore(judgment, verdict),
+  )
     .sort((a, b) => evidenceScore(b, verdict) - evidenceScore(a, verdict))
     .slice(0, 7);
 
