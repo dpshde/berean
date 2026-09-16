@@ -1,4 +1,4 @@
-import type { Candidate, ClaimVerdict, Relation, Verdict, VerseJudgment } from "./types.ts";
+import type { BeamChip, Candidate, ClaimVerdict, Relation, Verdict, VerseJudgment } from "./types.ts";
 
 export const SUPPORT_THRESHOLD = 0.5;
 
@@ -24,7 +24,12 @@ function evidenceScore(judgment: VerseJudgment, verdict: Verdict): number {
   return judgment.probabilities.contradicts;
 }
 
-export function composeVerdict(claim: string, candidates: Candidate[], raw: RawJudgment): ClaimVerdict {
+export function composeVerdict(
+  claim: string,
+  candidates: Candidate[],
+  raw: RawJudgment,
+  beam: BeamChip[] = [],
+): ClaimVerdict {
   const supported = raw.supported;
   const denied = raw.denied;
   const verdict: Verdict =
@@ -58,6 +63,7 @@ export function composeVerdict(claim: string, candidates: Candidate[], raw: RawJ
     supported,
     denied,
     evidence,
+    beam,
     translation: "Berean Standard Bible",
   };
 }

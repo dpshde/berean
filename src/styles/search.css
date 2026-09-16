@@ -412,6 +412,12 @@ input[type="text"].query-input::placeholder {
   padding: 0.22rem 0.45rem;
 }
 
+.lens-chip--winner {
+  color: var(--quick-go-fg-strong);
+  border-color: color-mix(in srgb, var(--quick-go) 65%, var(--border) 35%);
+  background: color-mix(in srgb, var(--quick-go) 18%, var(--panel) 82%);
+}
+
 .results-wrapper {
   display: flex;
   flex: 1;

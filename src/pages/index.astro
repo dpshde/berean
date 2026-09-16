@@ -23,9 +23,7 @@ if (Astro.request.method === "POST") {
   }
 }
 
-const lens = result
-  ? [...new Set(result.evidence.map((verse) => verse.displayRef.replace(/\s+\d+:\d+$/, "")))]
-  : [];
+const lens = result?.beam ?? [];
 const hasResults = Boolean(result || error);
 const verdictLabel = result?.verdict === "yes" ? "Yes" : result ? "No" : "";
 const verdictMeta =
@@ -160,9 +158,11 @@ const verdictMeta =
           )}
         </div>
         {lens.length > 0 && (
-          <div class="lens" aria-label="Books in the shortlist">
-            {lens.map((book) => (
-              <span class="lens-chip">{book}</span>
+          <div class="lens" aria-label="Jev zoom beam">
+            {lens.map((chip) => (
+              <span class:list={["lens-chip", `lens-chip--${chip.kind}`]}>
+                {chip.path}
+              </span>
             ))}
           </div>
         )}
@@ -174,14 +174,14 @@ const verdictMeta =
             <div class="empty-state-enhanced">
               <p class="empty-state-enhanced__title">Ask a claim. Scripture answers.</p>
               <p class="empty-state-enhanced__hint">
-                MiniSearch shortlists verses. Jev judges support or denial. The page prints the
-                verdict, then the evidence.
+                Jev zooms Book → Chapter → Verse with a width-3 beam. Code prints the
+                verdict, then the winning leaf verses.
               </p>
             </div>
           )}
           {result && result.evidence.length === 0 && (
             <div class="empty-state-enhanced">
-              <p class="empty-state-enhanced__title">No verse in the shortlist addressed this claim.</p>
+              <p class="empty-state-enhanced__title">No verse on the beam addressed this claim.</p>
             </div>
           )}
           {result?.evidence.map((verse) => (

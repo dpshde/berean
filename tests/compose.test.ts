@@ -44,6 +44,28 @@ test("yes when scripture supports the claim", () => {
   });
   assert.equal(result.verdict, "yes");
   assert.equal(result.evidence[0]?.displayRef, "John 1:1");
+  assert.deepEqual(result.beam, []);
+});
+
+test("composeVerdict keeps the zoom beam chips", () => {
+  const beam = [{ path: "John 1:1", score: 0.8, kind: "winner" as const }];
+  const result = composeVerdict(
+    "Jesus is the Word of God",
+    [john],
+    {
+      supported: 0.91,
+      denied: 0.08,
+      relations: [
+        {
+          choice: "supports",
+          probabilities: { supports: 0.94, contradicts: 0.02, silent: 0.04 },
+          confidence: 0.9,
+        },
+      ],
+    },
+    beam,
+  );
+  assert.deepEqual(result.beam, beam);
 });
 
 test("no when scripture denies the claim", () => {

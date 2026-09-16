@@ -1,8 +1,8 @@
 import { TypeSafeClient } from "@typesafe-ai/sdk";
 import { composeVerdict, type RelationAnswer } from "./compose.ts";
 import { buildQuestions, buildState } from "./questions.ts";
-import { retrieve } from "./search.ts";
 import type { ClaimVerdict } from "./types.ts";
+import { versesToCandidates, zoomToVerses } from "./zoom.ts";
 
 const MODEL = "jev-latest";
 
@@ -11,7 +11,7 @@ function client(): TypeSafeClient {
   if (!apiKey) {
     throw new Error("Set TYPESAFE_API_KEY to judge a claim.");
   }
-  return new TypeSafeClient({ apiKey, timeout: 60_000, defaultModel: MODEL });
+  return new TypeSafeClient({ apiKey, timeout: 180_000, defaultModel: MODEL });
 }
 
 export async function judgeClaim(claim: string): Promise<ClaimVerdict> {
@@ -20,7 +20,13 @@ export async function judgeClaim(claim: string): Promise<ClaimVerdict> {
     throw new Error("Write a claim.");
   }
 
-  const candidates = retrieve(trimmed);
+  const typesafe = client();
+  const zoomed = await zoomToVerses(trimmed, typesafe);
+  const candidates = versesToCandidates(
+    zoomed.verses,
+    zoomed.beam.map((chip) => chip.score),
+  );
+
   if (candidates.length === 0) {
     return {
       claim: trimmed,
@@ -28,11 +34,11 @@ export async function judgeClaim(claim: string): Promise<ClaimVerdict> {
       supported: 0,
       denied: 0,
       evidence: [],
+      beam: zoomed.beam,
       translation: "Berean Standard Bible",
     };
   }
 
-  const typesafe = client();
   const response = await typesafe.systemOne({
     state: buildState(trimmed, candidates),
     questions: buildQuestions(candidates),
@@ -54,5 +60,5 @@ export async function judgeClaim(claim: string): Promise<ClaimVerdict> {
     };
   });
 
-  return composeVerdict(trimmed, candidates, { supported, denied, relations });
+  return composeVerdict(trimmed, candidates, { supported, denied, relations }, zoomed.beam);
 }

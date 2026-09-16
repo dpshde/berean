@@ -25,11 +25,18 @@ export type VerseJudgment = {
 
 export type Verdict = "yes" | "no";
 
+export type BeamChip = {
+  path: string;
+  score: number;
+  kind: "winner" | "beam";
+};
+
 export type ClaimVerdict = {
   claim: string;
   verdict: Verdict;
   supported: number;
   denied: number;
   evidence: VerseJudgment[];
+  beam: BeamChip[];
   translation: "Berean Standard Bible";
 };

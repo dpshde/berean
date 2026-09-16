@@ -21,12 +21,12 @@ The key stays on the server. Get one at https://console.typesafe.ai
 
 ## How it decides
 
-1. Search the packed BSB (`data/bsb.json`) for a shortlist of verses.
-2. Ask TypeSafe, in one call:
+1. Zoom the packed BSB (`data/bsb.json`) Book → Chapter → Verse with Jev Choice and a width-3 beam (`path_score = product(edge_p) ** (1 / decisions)`).
+2. Ask TypeSafe, in one call, about the retained leaf verses:
    - does this scripture support the claim?
    - does it deny the claim?
    - for each verse: supports / contradicts / silent
 3. **Yes** only if support ≥ 0.5 and support ≥ denial. Otherwise **no**.
-4. Rank the shortlist by the matching probability and show those verses.
+4. Rank those verses by the matching probability and show them.
 
 The BSB text is public domain. See `data/NOTICE`.
