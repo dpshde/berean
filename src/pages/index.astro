@@ -1,33 +1,11 @@
 ---
 import "../styles/search.css";
-import { judgeClaim } from "../lib/verdict.ts";
-import type { ClaimVerdict } from "../lib/types.ts";
 
 const examples = [
-  "Jesus is the Word of God",
-  "God created the heavens",
-  "Love your enemies",
+  "hope",
+  "John 3:16",
+  "love your enemies",
 ];
-
-let result: ClaimVerdict | null = null;
-let error: string | null = null;
-let claim = "";
-
-if (Astro.request.method === "POST") {
-  const form = await Astro.request.formData();
-  claim = String(form.get("claim") ?? "");
-  try {
-    result = await judgeClaim(claim);
-  } catch (err) {
-    error = err instanceof Error ? err.message : "The claim could not be judged.";
-  }
-}
-
-const lens = result?.beam ?? [];
-const hasResults = Boolean(result || error);
-const verdictLabel = result?.verdict === "yes" ? "Yes" : result ? "No" : "";
-const verdictMeta =
-  result?.verdict === "yes" ? "supported · BSB" : result ? "not supported · BSB" : "";
 ---
 
 <html lang="en">
@@ -37,7 +15,7 @@ const verdictMeta =
     <title>Berean</title>
     <meta
       name="description"
-      content="Ask a claim. Get yes or no from the Berean Standard Bible, then the verses that best support that verdict."
+      content="Search the Berean Standard Bible by topic, passage, or phrase. The page prints the verdict, then the verses."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -91,28 +69,27 @@ const verdictMeta =
       </header>
 
       <section class="search-box">
-        <form id="claimForm" method="post">
+        <form id="claimForm">
           <div class="query-row">
             <input
               id="queryInput"
               class="query-input"
               type="text"
               name="claim"
-              value={claim}
               required
               maxlength="400"
               autocomplete="off"
               spellcheck="false"
               autofocus
-              placeholder="Ask a claim — Jesus is the Word of God…"
-              aria-label="Claim"
+              placeholder="Hope, anxiety, loving enemies, or John 3:16…"
+              aria-label="Search"
             />
             <button
               id="querySubmit"
               class="query-submit"
               type="submit"
-              aria-label="Judge claim"
-              title="Judge claim"
+              aria-label="Search"
+              title="Search"
             >
               <svg
                 viewBox="0 0 24 24"
@@ -129,76 +106,34 @@ const verdictMeta =
             </button>
           </div>
         </form>
-        <div class="topic-chips" aria-label="Example claims">
+        <div class="topic-chips" aria-label="Suggested topics">
           {examples.map((example) => (
-            <button class="topic-chip" type="button" data-claim={example}>
+            <button class="topic-chip" type="button" data-query={example}>
               {example}
             </button>
           ))}
         </div>
       </section>
 
-      <div
-        id="statusBar"
-        class="status-bar"
-        aria-live="polite"
-        hidden={!hasResults}
-      >
-        <div class="search-status">
-          {error && (
-            <span class="search-status-badge error-text" role="alert">{error}</span>
-          )}
-          {result && (
-            <>
-              <span class:list={["search-status-badge", `search-status-badge--${result.verdict}`]}>
-                {verdictLabel}
-              </span>
-              <span class="search-status-meta">{verdictMeta}</span>
-            </>
-          )}
-        </div>
-        {lens.length > 0 && (
-          <div class="lens" aria-label="Jev zoom beam">
-            {lens.map((chip) => (
-              <span class:list={["lens-chip", `lens-chip--${chip.kind}`]}>
-                {chip.path}
-              </span>
-            ))}
-          </div>
-        )}
+      <div id="statusBar" class="status-bar" aria-live="polite" hidden>
+        <div class="search-status"></div>
       </div>
 
-      <div class:list={["results-wrapper", { "is-empty": !result }]}>
-        <section class="results" aria-live="polite">
-          {!result && !error && (
-            <div class="empty-state-enhanced">
-              <p class="empty-state-enhanced__title">Ask a claim. Scripture answers.</p>
-              <p class="empty-state-enhanced__hint">
-                Jev zooms Book → Chapter → Verse with a width-3 beam. Code prints the
-                verdict, then the winning leaf verses.
-              </p>
-            </div>
-          )}
-          {result && result.evidence.length === 0 && (
-            <div class="empty-state-enhanced">
-              <p class="empty-state-enhanced__title">No verse on the beam addressed this claim.</p>
-            </div>
-          )}
-          {result?.evidence.map((verse) => (
-            <article class="card">
-              <cite class="card__ref">{verse.displayRef}</cite>
-              <p class="card__text">{verse.text}</p>
-              <span class:list={["card__relation", `card__relation--${verse.relation}`]}>
-                {verse.relation}
-              </span>
-            </article>
-          ))}
+      <div id="resultsWrapper" class="results-wrapper is-empty">
+        <section id="results" class="results" aria-live="polite">
+          <div class="empty-state-enhanced">
+            <p class="empty-state-enhanced__title">Search by topic, passage, or phrase.</p>
+            <p class="empty-state-enhanced__hint">
+              Try a topic like hope, a phrase like love your enemies, or a passage like
+              John 3:16.
+            </p>
+          </div>
         </section>
       </div>
 
       <div class="results-footer-shell">
         <footer class="results-footer">
-          <p class="health-badge">Berean Standard Bible. Scripture judges the claim.</p>
+          <p class="health-badge">Berean Standard Bible</p>
         </footer>
       </div>
     </main>
@@ -208,12 +143,19 @@ const verdictMeta =
       const submit = document.getElementById("querySubmit");
       const themeToggle = document.getElementById("themeToggle");
       const statusBar = document.getElementById("statusBar");
+      const resultsWrapper = document.getElementById("resultsWrapper");
+      const results = document.getElementById("results");
 
-      const syncThemeButton = () => {
-        if (!themeToggle) return;
+      const escapeHtml = (value: string) =>
+        value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;");
+
+      if (themeToggle) {
         themeToggle.dataset.theme = document.documentElement.dataset.theme ?? "light";
-      };
-      syncThemeButton();
+      }
 
       themeToggle?.addEventListener("click", () => {
         const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
@@ -226,27 +168,128 @@ const verdictMeta =
         }
       });
 
-      const setLoading = () => {
+      const setBusy = (busy: boolean) => {
         if (submit instanceof HTMLButtonElement) {
-          submit.disabled = true;
-          submit.classList.add("is-loading");
-          submit.setAttribute("aria-busy", "true");
-        }
-        if (statusBar) {
-          statusBar.hidden = false;
-          statusBar.innerHTML =
-            '<div class="search-status"><span class="search-status-badge search-status-badge--loading">Judging…</span></div>';
+          submit.disabled = busy;
+          submit.classList.toggle("is-loading", busy);
+          submit.setAttribute("aria-busy", busy ? "true" : "false");
         }
       };
 
-      form?.addEventListener("submit", setLoading);
+      const showStatus = (html: string) => {
+        if (!statusBar) return;
+        statusBar.hidden = false;
+        statusBar.innerHTML = html;
+      };
 
-      for (const chip of document.querySelectorAll("[data-claim]")) {
+      const renderEmpty = () => {
+        if (resultsWrapper) resultsWrapper.classList.add("is-empty");
+        if (results) {
+          results.innerHTML = `
+            <div class="empty-state-enhanced">
+              <p class="empty-state-enhanced__title">Search by topic, passage, or phrase.</p>
+              <p class="empty-state-enhanced__hint">
+                Try a topic like hope, a phrase like love your enemies, or a passage like
+                John 3:16.
+              </p>
+            </div>`;
+        }
+      };
+
+      const renderError = (message: string) => {
+        showStatus(
+          `<div class="search-status"><span class="search-status-badge error-text" role="alert">${escapeHtml(message)}</span></div>`,
+        );
+        renderEmpty();
+      };
+
+      const renderResult = (payload: {
+        verdict: string;
+        evidence: { displayRef: string; text: string; relation: string }[];
+        beam?: { path: string; kind: string }[];
+      }) => {
+        const verdictLabel = payload.verdict === "yes" ? "Yes" : "No";
+        const verdictMeta = payload.verdict === "yes" ? "supported · BSB" : "not supported · BSB";
+        const beam = payload.beam ?? [];
+        const lens = beam
+          .map(
+            (chip) =>
+              `<span class="lens-chip lens-chip--${escapeHtml(chip.kind)}">${escapeHtml(chip.path)}</span>`,
+          )
+          .join("");
+        showStatus(`
+          <div class="search-status">
+            <span class="search-status-badge search-status-badge--${escapeHtml(payload.verdict)}">${verdictLabel}</span>
+            <span class="search-status-meta">${verdictMeta}</span>
+          </div>
+          ${lens ? `<div class="lens" aria-label="Jev zoom beam">${lens}</div>` : ""}
+        `);
+        if (resultsWrapper) resultsWrapper.classList.toggle("is-empty", payload.evidence.length === 0);
+        if (!results) return;
+        if (payload.evidence.length === 0) {
+          results.innerHTML = `
+            <div class="empty-state-enhanced">
+              <p class="empty-state-enhanced__title">No verse on the beam addressed this.</p>
+            </div>`;
+          return;
+        }
+        results.innerHTML = payload.evidence
+          .map(
+            (verse) => `
+              <article class="card">
+                <cite class="card__ref">${escapeHtml(verse.displayRef)}</cite>
+                <p class="card__text">${escapeHtml(verse.text)}</p>
+                <span class="card__relation card__relation--${escapeHtml(verse.relation)}">${escapeHtml(verse.relation)}</span>
+              </article>`,
+          )
+          .join("");
+      };
+
+      const search = async (query: string) => {
+        const claim = query.trim();
+        if (!claim) return;
+        setBusy(true);
+        showStatus(
+          '<div class="search-status"><span class="search-status-badge search-status-badge--loading">Searching…</span></div>',
+        );
+        try {
+          const response = await fetch("/api/verdict", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ claim }),
+          });
+          const payload = (await response.json()) as {
+            error?: string;
+            verdict?: string;
+            evidence?: { displayRef: string; text: string; relation: string }[];
+            beam?: { path: string; kind: string }[];
+          };
+          if (!response.ok || payload.error || !payload.verdict || !payload.evidence) {
+            renderError(payload.error ?? "Search failed.");
+            return;
+          }
+          renderResult({
+            verdict: payload.verdict,
+            evidence: payload.evidence,
+            beam: payload.beam,
+          });
+        } catch (err) {
+          renderError(err instanceof Error ? err.message : "Search failed.");
+        } finally {
+          setBusy(false);
+        }
+      };
+
+      form?.addEventListener("submit", (event) => {
+        event.preventDefault();
+        if (input instanceof HTMLInputElement) void search(input.value);
+      });
+
+      for (const chip of document.querySelectorAll("[data-query]")) {
         chip.addEventListener("click", () => {
-          if (!(input instanceof HTMLInputElement) || !(form instanceof HTMLFormElement)) return;
-          input.value = chip.getAttribute("data-claim") ?? "";
-          if (form.requestSubmit) form.requestSubmit();
-          else form.submit();
+          if (!(input instanceof HTMLInputElement)) return;
+          input.value = chip.getAttribute("data-query") ?? "";
+          void search(input.value);
         });
       }
     </script>
