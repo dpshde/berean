@@ -6,10 +6,20 @@ export type Verse = {
   text: string;
 };
 
+export type RecallLane = "beam" | "lexical" | "topical";
+
+export type RecallCounts = {
+  beam: number;
+  lexical: number;
+  topical: number;
+};
+
 export type Candidate = Verse & {
   displayRef: string;
   context: string;
   searchScore: number;
+  sourceScore?: number;
+  lanes?: RecallLane[];
 };
 
 export type Relation = "supports" | "contradicts" | "silent";
@@ -47,5 +57,6 @@ export type ClaimVerdict = {
   denied: number;
   evidence: VerseJudgment[];
   beam: BeamChip[];
+  recall: RecallCounts;
   translation: "Berean Standard Bible";
 };

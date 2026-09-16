@@ -123,5 +123,7 @@ export function versesToCandidates(verses: Verse[], scores: number[]): Candidate
     displayRef: displayRef(verse),
     context: neighborContext(verse.id),
     searchScore: scores[index] ?? 0,
+    sourceScore: scores[index] ?? 0,
+    lanes: ["beam"],
   }));
 }

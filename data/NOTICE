@@ -12,3 +12,9 @@ Starter pack converted from Midvash bible-cross-references (CC BY 4.0),
 themed clusters mapped onto BSB verse ids. Not a full TSK dump.
 Source: https://github.com/midvash/bible-cross-references
 Attribution: Midvash — https://midvash.com
+
+Topic seeds (`topics.json`)
+Compact topic → OSIS passage-seed index ported from route.bible curated
+topic pages (`/topics/{slug}`), plus a lust topic that those pages omit.
+Seeds keep `sourceScore`. Ranges expand in code to BSB verses.
+Source: https://route.bible

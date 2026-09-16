@@ -1,0 +1,1146 @@
+{
+  "topics": [
+    {
+      "slug": "love",
+      "label": "Love",
+      "keywords": [
+        "love",
+        "loved",
+        "loves",
+        "loving",
+        "charity"
+      ],
+      "seeds": [
+        {
+          "osis": "1CO.13.4-8",
+          "sourceScore": 7
+        },
+        {
+          "osis": "1CO.16.14",
+          "sourceScore": 5
+        },
+        {
+          "osis": "JHN.3.16",
+          "sourceScore": 4
+        },
+        {
+          "osis": "GAL.5.13-14",
+          "sourceScore": 3
+        },
+        {
+          "osis": "1JN.4.8",
+          "sourceScore": 3
+        },
+        {
+          "osis": "1PE.4.8",
+          "sourceScore": 2
+        },
+        {
+          "osis": "COL.3.14",
+          "sourceScore": 2
+        },
+        {
+          "osis": "1CO.13.13",
+          "sourceScore": 2
+        },
+        {
+          "osis": "JHN.15.13",
+          "sourceScore": 2
+        },
+        {
+          "osis": "JHN.13.34-35",
+          "sourceScore": 2
+        },
+        {
+          "osis": "1JN.4.19",
+          "sourceScore": 2
+        },
+        {
+          "osis": "ROM.12.9-10",
+          "sourceScore": 1
+        }
+      ]
+    },
+    {
+      "slug": "faith",
+      "label": "Faith",
+      "keywords": [
+        "faith",
+        "belief",
+        "believe",
+        "trust"
+      ],
+      "seeds": [
+        {
+          "osis": "HEB.11.6",
+          "sourceScore": 5
+        },
+        {
+          "osis": "MAT.21.22",
+          "sourceScore": 4
+        },
+        {
+          "osis": "ROM.10.17",
+          "sourceScore": 4
+        },
+        {
+          "osis": "HEB.11.1",
+          "sourceScore": 4
+        },
+        {
+          "osis": "MRK.11.22-24",
+          "sourceScore": 3
+        },
+        {
+          "osis": "2CO.5.7",
+          "sourceScore": 3
+        },
+        {
+          "osis": "EPH.2.8-9",
+          "sourceScore": 3
+        },
+        {
+          "osis": "PRO.3.5-6",
+          "sourceScore": 2
+        },
+        {
+          "osis": "LUK.1.37",
+          "sourceScore": 2
+        },
+        {
+          "osis": "JAS.2.19",
+          "sourceScore": 2
+        },
+        {
+          "osis": "1CO.2.5",
+          "sourceScore": 2
+        }
+      ]
+    },
+    {
+      "slug": "hope",
+      "label": "Hope",
+      "keywords": [
+        "hope",
+        "hoping"
+      ],
+      "seeds": [
+        {
+          "osis": "ROM.15.13",
+          "sourceScore": 3
+        },
+        {
+          "osis": "JER.29.11",
+          "sourceScore": 3
+        },
+        {
+          "osis": "ISA.40.31",
+          "sourceScore": 2
+        },
+        {
+          "osis": "HEB.11.1",
+          "sourceScore": 2
+        },
+        {
+          "osis": "ROM.12.12",
+          "sourceScore": 2
+        },
+        {
+          "osis": "ROM.15.4",
+          "sourceScore": 2
+        },
+        {
+          "osis": "1PE.1.3",
+          "sourceScore": 2
+        },
+        {
+          "osis": "COL.1.27",
+          "sourceScore": 2
+        },
+        {
+          "osis": "ROM.5.5",
+          "sourceScore": 2
+        }
+      ]
+    },
+    {
+      "slug": "anxiety",
+      "label": "Anxiety",
+      "keywords": [
+        "anxiety",
+        "anxious",
+        "worry",
+        "worries",
+        "worried"
+      ],
+      "seeds": [
+        {
+          "osis": "PHP.4.6-7",
+          "sourceScore": 4
+        },
+        {
+          "osis": "1PE.5.7",
+          "sourceScore": 3
+        },
+        {
+          "osis": "JHN.14.27",
+          "sourceScore": 3
+        },
+        {
+          "osis": "2TI.1.7",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PSA.55.22",
+          "sourceScore": 2
+        },
+        {
+          "osis": "MAT.6.25-34",
+          "sourceScore": 2
+        },
+        {
+          "osis": "HEB.13.6",
+          "sourceScore": 2
+        },
+        {
+          "osis": "JOS.1.9",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PSA.94.19",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PRO.3.5-6",
+          "sourceScore": 2
+        },
+        {
+          "osis": "ISA.41.10",
+          "sourceScore": 2
+        },
+        {
+          "osis": "MAT.11.28-30",
+          "sourceScore": 2
+        }
+      ]
+    },
+    {
+      "slug": "peace",
+      "label": "Peace",
+      "keywords": [
+        "peace",
+        "peacemakers"
+      ],
+      "seeds": [
+        {
+          "osis": "JHN.16.33",
+          "sourceScore": 4
+        },
+        {
+          "osis": "2TH.3.16",
+          "sourceScore": 4
+        },
+        {
+          "osis": "ISA.26.3",
+          "sourceScore": 3
+        },
+        {
+          "osis": "MAT.5.9",
+          "sourceScore": 3
+        },
+        {
+          "osis": "JHN.14.27",
+          "sourceScore": 3
+        },
+        {
+          "osis": "PSA.4.8",
+          "sourceScore": 3
+        },
+        {
+          "osis": "PHP.4.6-7",
+          "sourceScore": 2
+        },
+        {
+          "osis": "COL.3.15",
+          "sourceScore": 2
+        },
+        {
+          "osis": "ROM.12.18",
+          "sourceScore": 2
+        },
+        {
+          "osis": "HEB.12.14",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PSA.119.165",
+          "sourceScore": 2
+        },
+        {
+          "osis": "ROM.5.1",
+          "sourceScore": 2
+        }
+      ]
+    },
+    {
+      "slug": "forgiveness",
+      "label": "Forgiveness",
+      "keywords": [
+        "forgiveness",
+        "forgive",
+        "forgiven",
+        "mercy"
+      ],
+      "seeds": [
+        {
+          "osis": "EPH.4.32",
+          "sourceScore": 6
+        },
+        {
+          "osis": "MRK.11.25",
+          "sourceScore": 5
+        },
+        {
+          "osis": "1JN.1.9",
+          "sourceScore": 5
+        },
+        {
+          "osis": "MAT.18.21-22",
+          "sourceScore": 4
+        },
+        {
+          "osis": "MAT.6.14-15",
+          "sourceScore": 3
+        },
+        {
+          "osis": "LUK.6.37",
+          "sourceScore": 3
+        },
+        {
+          "osis": "COL.3.13",
+          "sourceScore": 3
+        },
+        {
+          "osis": "JAS.5.16",
+          "sourceScore": 2
+        },
+        {
+          "osis": "LUK.6.27",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PSA.103.10-14",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PRO.10.12",
+          "sourceScore": 2
+        },
+        {
+          "osis": "EPH.1.7",
+          "sourceScore": 2
+        }
+      ]
+    },
+    {
+      "slug": "strength",
+      "label": "Strength",
+      "keywords": [
+        "strength",
+        "strong",
+        "courageous"
+      ],
+      "seeds": [
+        {
+          "osis": "PHP.4.13",
+          "sourceScore": 3
+        },
+        {
+          "osis": "ISA.41.10",
+          "sourceScore": 3
+        },
+        {
+          "osis": "ISA.40.31",
+          "sourceScore": 3
+        },
+        {
+          "osis": "EPH.6.10",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PSA.73.26",
+          "sourceScore": 2
+        },
+        {
+          "osis": "1CH.16.11",
+          "sourceScore": 2
+        },
+        {
+          "osis": "DEU.31.6",
+          "sourceScore": 2
+        },
+        {
+          "osis": "1CO.16.13",
+          "sourceScore": 2
+        },
+        {
+          "osis": "HAB.3.19",
+          "sourceScore": 2
+        },
+        {
+          "osis": "2TI.1.7",
+          "sourceScore": 2
+        },
+        {
+          "osis": "EXO.15.2",
+          "sourceScore": 2
+        },
+        {
+          "osis": "JOS.1.9",
+          "sourceScore": 2
+        }
+      ]
+    },
+    {
+      "slug": "prayer",
+      "label": "Prayer",
+      "keywords": [
+        "prayer",
+        "pray",
+        "praying"
+      ],
+      "seeds": [
+        {
+          "osis": "MRK.11.24",
+          "sourceScore": 2
+        },
+        {
+          "osis": "ROM.8.26",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PHP.4.6",
+          "sourceScore": 2
+        },
+        {
+          "osis": "JAS.5.16",
+          "sourceScore": 2
+        },
+        {
+          "osis": "MAT.6.6",
+          "sourceScore": 2
+        },
+        {
+          "osis": "MAT.6.7",
+          "sourceScore": 2
+        },
+        {
+          "osis": "COL.4.2",
+          "sourceScore": 2
+        },
+        {
+          "osis": "1TH.5.17",
+          "sourceScore": 2
+        },
+        {
+          "osis": "JER.33.3",
+          "sourceScore": 2
+        }
+      ]
+    },
+    {
+      "slug": "marriage",
+      "label": "Marriage",
+      "keywords": [
+        "marriage",
+        "married",
+        "wife",
+        "husband",
+        "spouses"
+      ],
+      "seeds": [
+        {
+          "osis": "GEN.2.24",
+          "sourceScore": 4
+        },
+        {
+          "osis": "HEB.13.4",
+          "sourceScore": 4
+        },
+        {
+          "osis": "PRO.18.22",
+          "sourceScore": 4
+        },
+        {
+          "osis": "1CO.7.1-40",
+          "sourceScore": 4
+        },
+        {
+          "osis": "1CO.13.4-7",
+          "sourceScore": 3
+        },
+        {
+          "osis": "2CO.6.14",
+          "sourceScore": 3
+        },
+        {
+          "osis": "EPH.5.22-33",
+          "sourceScore": 3
+        },
+        {
+          "osis": "1PE.3.7",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PRO.21.9",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PRO.19.14",
+          "sourceScore": 2
+        },
+        {
+          "osis": "GEN.2.18",
+          "sourceScore": 2
+        },
+        {
+          "osis": "MAT.19.2-9",
+          "sourceScore": 2
+        }
+      ]
+    },
+    {
+      "slug": "grief",
+      "label": "Grief",
+      "keywords": [
+        "grief",
+        "grieve",
+        "mourning",
+        "sorrow",
+        "loss"
+      ],
+      "seeds": [
+        {
+          "osis": "MAT.5.4",
+          "sourceScore": 6
+        },
+        {
+          "osis": "REV.21.4",
+          "sourceScore": 5
+        },
+        {
+          "osis": "PSA.147.3",
+          "sourceScore": 5
+        },
+        {
+          "osis": "PSA.34.18",
+          "sourceScore": 4
+        },
+        {
+          "osis": "1PE.5.7",
+          "sourceScore": 4
+        },
+        {
+          "osis": "MAT.11.28-30",
+          "sourceScore": 3
+        },
+        {
+          "osis": "JHN.16.22",
+          "sourceScore": 3
+        },
+        {
+          "osis": "PSA.73.26",
+          "sourceScore": 2
+        },
+        {
+          "osis": "ROM.8.18",
+          "sourceScore": 2
+        },
+        {
+          "osis": "JHN.14.27",
+          "sourceScore": 2
+        },
+        {
+          "osis": "1TH.4.13",
+          "sourceScore": 2
+        },
+        {
+          "osis": "2CO.1.3-4",
+          "sourceScore": 2
+        }
+      ]
+    },
+    {
+      "slug": "fear",
+      "label": "Fear",
+      "keywords": [
+        "fear",
+        "afraid",
+        "courage"
+      ],
+      "seeds": [
+        {
+          "osis": "ISA.41.10",
+          "sourceScore": 7
+        },
+        {
+          "osis": "2TI.1.7",
+          "sourceScore": 6
+        },
+        {
+          "osis": "1JN.4.18",
+          "sourceScore": 4
+        },
+        {
+          "osis": "PSA.34.4",
+          "sourceScore": 4
+        },
+        {
+          "osis": "JOS.1.9",
+          "sourceScore": 3
+        },
+        {
+          "osis": "PRO.29.25",
+          "sourceScore": 3
+        },
+        {
+          "osis": "PSA.23.1-6",
+          "sourceScore": 3
+        },
+        {
+          "osis": "PSA.56.3-4",
+          "sourceScore": 3
+        },
+        {
+          "osis": "DEU.31.6",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PSA.27.1",
+          "sourceScore": 2
+        },
+        {
+          "osis": "ROM.8.15",
+          "sourceScore": 2
+        },
+        {
+          "osis": "JHN.14.27",
+          "sourceScore": 2
+        }
+      ]
+    },
+    {
+      "slug": "salvation",
+      "label": "Salvation",
+      "keywords": [
+        "salvation",
+        "saved",
+        "save"
+      ],
+      "seeds": [
+        {
+          "osis": "EPH.2.8-9",
+          "sourceScore": 5
+        },
+        {
+          "osis": "TIT.3.5",
+          "sourceScore": 4
+        },
+        {
+          "osis": "ACT.4.12",
+          "sourceScore": 3
+        },
+        {
+          "osis": "ROM.10.9",
+          "sourceScore": 3
+        },
+        {
+          "osis": "JHN.14.6",
+          "sourceScore": 3
+        },
+        {
+          "osis": "MAT.7.21",
+          "sourceScore": 2
+        },
+        {
+          "osis": "JHN.6.44",
+          "sourceScore": 2
+        },
+        {
+          "osis": "ROM.6.23",
+          "sourceScore": 1
+        }
+      ]
+    },
+    {
+      "slug": "wisdom",
+      "label": "Wisdom",
+      "keywords": [
+        "wisdom",
+        "wise"
+      ],
+      "seeds": [
+        {
+          "osis": "JAS.1.5",
+          "sourceScore": 5
+        },
+        {
+          "osis": "JAS.3.17",
+          "sourceScore": 4
+        },
+        {
+          "osis": "PRO.3.13-18",
+          "sourceScore": 3
+        },
+        {
+          "osis": "PRO.1.7",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PRO.19.20",
+          "sourceScore": 2
+        },
+        {
+          "osis": "EPH.5.15-17",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PRO.12.15",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PRO.10.23",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PRO.2.6",
+          "sourceScore": 2
+        }
+      ]
+    },
+    {
+      "slug": "humility",
+      "label": "Humility",
+      "keywords": [
+        "humility",
+        "humble"
+      ],
+      "seeds": [
+        {
+          "osis": "PRO.22.4",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PRO.11.2",
+          "sourceScore": 2
+        },
+        {
+          "osis": "JAS.4.10",
+          "sourceScore": 2
+        },
+        {
+          "osis": "COL.3.12",
+          "sourceScore": 2
+        },
+        {
+          "osis": "MIC.6.8",
+          "sourceScore": 2
+        },
+        {
+          "osis": "EPH.4.2",
+          "sourceScore": 2
+        },
+        {
+          "osis": "2CH.7.14",
+          "sourceScore": 2
+        },
+        {
+          "osis": "1PE.5.6",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PRO.18.12",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PRO.15.33",
+          "sourceScore": 2
+        },
+        {
+          "osis": "1PE.5.5",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PHP.2.3",
+          "sourceScore": 2
+        }
+      ]
+    },
+    {
+      "slug": "joy",
+      "label": "Joy",
+      "keywords": [
+        "joy",
+        "rejoice",
+        "gladness"
+      ],
+      "seeds": [
+        {
+          "osis": "ROM.15.13",
+          "sourceScore": 4
+        },
+        {
+          "osis": "ROM.12.12",
+          "sourceScore": 3
+        },
+        {
+          "osis": "PHP.4.4",
+          "sourceScore": 3
+        },
+        {
+          "osis": "JAS.1.2",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PSA.16.11",
+          "sourceScore": 2
+        },
+        {
+          "osis": "JHN.16.24",
+          "sourceScore": 2
+        },
+        {
+          "osis": "GAL.5.22",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PRO.17.22",
+          "sourceScore": 2
+        },
+        {
+          "osis": "JHN.16.22",
+          "sourceScore": 2
+        },
+        {
+          "osis": "JHN.15.11",
+          "sourceScore": 2
+        },
+        {
+          "osis": "ROM.14.17",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PSA.118.24",
+          "sourceScore": 2
+        }
+      ]
+    },
+    {
+      "slug": "patience",
+      "label": "Patience",
+      "keywords": [
+        "patience",
+        "patient",
+        "endurance"
+      ],
+      "seeds": [
+        {
+          "osis": "ROM.12.12",
+          "sourceScore": 4
+        },
+        {
+          "osis": "GAL.6.9",
+          "sourceScore": 3
+        },
+        {
+          "osis": "ROM.8.25",
+          "sourceScore": 3
+        },
+        {
+          "osis": "EPH.4.2",
+          "sourceScore": 3
+        },
+        {
+          "osis": "PSA.37.7",
+          "sourceScore": 2
+        },
+        {
+          "osis": "1CO.13.4",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PSA.37.7-9",
+          "sourceScore": 2
+        },
+        {
+          "osis": "COL.3.12",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PRO.15.18",
+          "sourceScore": 2
+        },
+        {
+          "osis": "JER.29.11",
+          "sourceScore": 2
+        },
+        {
+          "osis": "ISA.40.31",
+          "sourceScore": 2
+        },
+        {
+          "osis": "ECC.7.8",
+          "sourceScore": 2
+        }
+      ]
+    },
+    {
+      "slug": "healing",
+      "label": "Healing",
+      "keywords": [
+        "healing",
+        "heal",
+        "healed",
+        "sickness"
+      ],
+      "seeds": [
+        {
+          "osis": "JER.17.14",
+          "sourceScore": 3
+        },
+        {
+          "osis": "1PE.2.24",
+          "sourceScore": 3
+        },
+        {
+          "osis": "ISA.41.10",
+          "sourceScore": 3
+        },
+        {
+          "osis": "ISA.53.5",
+          "sourceScore": 3
+        },
+        {
+          "osis": "JER.33.6",
+          "sourceScore": 3
+        },
+        {
+          "osis": "PSA.147.3",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PSA.41.3",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PSA.103.2-4",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PRO.17.22",
+          "sourceScore": 2
+        },
+        {
+          "osis": "JAS.5.15",
+          "sourceScore": 2
+        },
+        {
+          "osis": "3JN.1.2",
+          "sourceScore": 2
+        },
+        {
+          "osis": "JAS.5.16",
+          "sourceScore": 2
+        }
+      ]
+    },
+    {
+      "slug": "grace",
+      "label": "Grace",
+      "keywords": [
+        "grace"
+      ],
+      "seeds": [
+        {
+          "osis": "EPH.2.8-9",
+          "sourceScore": 6
+        },
+        {
+          "osis": "2CO.12.9",
+          "sourceScore": 6
+        },
+        {
+          "osis": "ROM.6.14",
+          "sourceScore": 5
+        },
+        {
+          "osis": "ROM.11.6",
+          "sourceScore": 4
+        },
+        {
+          "osis": "JAS.4.6",
+          "sourceScore": 4
+        },
+        {
+          "osis": "HEB.4.16",
+          "sourceScore": 3
+        },
+        {
+          "osis": "1CO.15.10",
+          "sourceScore": 3
+        },
+        {
+          "osis": "JHN.1.16",
+          "sourceScore": 3
+        },
+        {
+          "osis": "ROM.5.8",
+          "sourceScore": 2
+        },
+        {
+          "osis": "TIT.2.11-14",
+          "sourceScore": 2
+        },
+        {
+          "osis": "ROM.3.24",
+          "sourceScore": 2
+        }
+      ]
+    },
+    {
+      "slug": "suffering",
+      "label": "Suffering",
+      "keywords": [
+        "suffering",
+        "suffer",
+        "affliction",
+        "trials"
+      ],
+      "seeds": [
+        {
+          "osis": "1PE.5.10",
+          "sourceScore": 3
+        },
+        {
+          "osis": "ROM.8.18",
+          "sourceScore": 3
+        },
+        {
+          "osis": "ROM.5.3-5",
+          "sourceScore": 2
+        },
+        {
+          "osis": "JAS.1.2-4",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PSA.34.19",
+          "sourceScore": 2
+        },
+        {
+          "osis": "JHN.16.33",
+          "sourceScore": 2
+        },
+        {
+          "osis": "REV.21.4",
+          "sourceScore": 2
+        },
+        {
+          "osis": "2TI.3.12",
+          "sourceScore": 2
+        },
+        {
+          "osis": "ROM.8.28",
+          "sourceScore": 2
+        },
+        {
+          "osis": "2CO.4.17",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PHP.1.29",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PHP.3.10",
+          "sourceScore": 2
+        }
+      ]
+    },
+    {
+      "slug": "lust",
+      "label": "Lust",
+      "keywords": [
+        "lust",
+        "lusts",
+        "lusting",
+        "desire",
+        "desires",
+        "sexual immorality",
+        "impurity",
+        "fornication",
+        "adultery",
+        "passions",
+        "flesh"
+      ],
+      "seeds": [
+        {
+          "osis": "MAT.5.27-28",
+          "sourceScore": 7
+        },
+        {
+          "osis": "1CO.6.18",
+          "sourceScore": 6
+        },
+        {
+          "osis": "1JN.2.16",
+          "sourceScore": 5
+        },
+        {
+          "osis": "GAL.5.16",
+          "sourceScore": 4
+        },
+        {
+          "osis": "2TI.2.22",
+          "sourceScore": 4
+        },
+        {
+          "osis": "JOB.31.1",
+          "sourceScore": 3
+        },
+        {
+          "osis": "COL.3.5",
+          "sourceScore": 3
+        },
+        {
+          "osis": "ROM.13.14",
+          "sourceScore": 3
+        },
+        {
+          "osis": "JAS.1.14-15",
+          "sourceScore": 2
+        },
+        {
+          "osis": "1PE.2.11",
+          "sourceScore": 2
+        },
+        {
+          "osis": "1TH.4.3-5",
+          "sourceScore": 2
+        },
+        {
+          "osis": "GAL.5.19-21",
+          "sourceScore": 2
+        },
+        {
+          "osis": "PRO.6.25",
+          "sourceScore": 2
+        },
+        {
+          "osis": "EPH.5.3",
+          "sourceScore": 2
+        }
+      ]
+    }
+  ]
+}

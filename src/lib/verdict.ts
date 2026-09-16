@@ -11,7 +11,8 @@ import {
 } from "./questions.ts";
 import { applyRerankScores, FREE_FORM_EVIDENCE, mergeRecall, POLAR_EVIDENCE, RERANK_CAP } from "./recall.ts";
 import { retrieve } from "./search.ts";
-import type { ClaimVerdict, QuestionKind } from "./types.ts";
+import { getPassageCandidates } from "./topics.ts";
+import type { ClaimVerdict, QuestionKind, RecallCounts } from "./types.ts";
 import { expandXrefs } from "./xrefs.ts";
 import { versesToCandidates, zoomToVerses } from "./zoom.ts";
 
@@ -54,12 +55,21 @@ export async function judgeClaim(claim: string): Promise<ClaimVerdict> {
   }
 
   const typesafe = client();
-  const zoomed = await zoomToVerses(trimmed, typesafe);
+  const [zoomed, lexical, topical] = await Promise.all([
+    zoomToVerses(trimmed, typesafe),
+    Promise.resolve().then(() => retrieve(trimmed)),
+    Promise.resolve().then(() => getPassageCandidates(trimmed)),
+  ]);
   const beamCandidates = versesToCandidates(
     zoomed.verses,
     zoomed.beam.map((chip) => chip.score),
   );
-  const shortlist = mergeRecall(beamCandidates, retrieve(trimmed), RERANK_CAP);
+  const recall: RecallCounts = {
+    beam: beamCandidates.length,
+    lexical: lexical.length,
+    topical: topical.length,
+  };
+  const shortlist = mergeRecall({ beam: beamCandidates, lexical, topical }, RERANK_CAP);
 
   if (shortlist.length === 0) {
     const kindResponse = await typesafe.systemOne({
@@ -78,6 +88,8 @@ export async function judgeClaim(claim: string): Promise<ClaimVerdict> {
       [],
       { questionKind, supported: 0, denied: 0, relations: [] },
       zoomed.beam,
+      undefined,
+      recall,
     );
   }
 
@@ -119,6 +131,7 @@ export async function judgeClaim(claim: string): Promise<ClaimVerdict> {
       { questionKind, supported, denied, relations },
       zoomed.beam,
       POLAR_EVIDENCE,
+      recall,
     );
   }
 
@@ -138,5 +151,6 @@ export async function judgeClaim(claim: string): Promise<ClaimVerdict> {
     },
     zoomed.beam,
     expanded.length,
+    recall,
   );
 }

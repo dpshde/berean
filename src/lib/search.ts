@@ -72,6 +72,8 @@ function toCandidate(id: string, searchScore: number): Candidate | null {
     displayRef: displayRef(verse),
     context: neighborContext(verse.id),
     searchScore,
+    sourceScore: searchScore,
+    lanes: ["lexical"],
   };
 }
 
@@ -117,6 +119,8 @@ export function retrieveFrom(
       displayRef: displayRef(verse),
       context: "",
       searchScore: hit.score,
+      sourceScore: hit.score,
+      lanes: ["lexical"],
     };
   });
 }

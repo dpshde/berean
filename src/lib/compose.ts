@@ -6,6 +6,7 @@ import type {
   Candidate,
   ClaimVerdict,
   QuestionKind,
+  RecallCounts,
   Relation,
   Verdict,
   VerseJudgment,
@@ -36,12 +37,15 @@ function evidenceScore(judgment: VerseJudgment, verdict: Verdict): number {
   return judgment.probabilities.contradicts;
 }
 
+const EMPTY_RECALL: RecallCounts = { beam: 0, lexical: 0, topical: 0 };
+
 export function composeVerdict(
   claim: string,
   candidates: Candidate[],
   raw: RawJudgment,
   beam: BeamChip[] = [],
   evidenceLimit?: number,
+  recall: RecallCounts = EMPTY_RECALL,
 ): ClaimVerdict {
   const supported = raw.supported;
   const denied = raw.denied;
@@ -103,6 +107,7 @@ export function composeVerdict(
     denied,
     evidence,
     beam,
+    recall,
     translation: "Berean Standard Bible",
   };
 }

@@ -21,6 +21,12 @@ test("parsePassageQuery reads common BCV and OSIS forms", () => {
     verse: 18,
     endVerse: 18,
   });
+  assert.deepEqual(parsePassageQuery("1CO.13.4-8"), {
+    book: "1 Corinthians",
+    chapter: 13,
+    verse: 4,
+    endVerse: 8,
+  });
   assert.equal(parsePassageQuery("lust"), undefined);
 });
 

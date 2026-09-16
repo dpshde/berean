@@ -181,6 +181,7 @@ test("free-form ranking uses beam score and keeps silent verses", () => {
   assert.equal(result.verdict, null);
   assert.equal(result.evidence[0]?.id, "Jhn.1.1");
   assert.equal(result.evidence.length, 2);
+  assert.deepEqual(result.recall, { beam: 0, lexical: 0, topical: 0 });
 });
 
 test("incomplete Galatians 5:22 becomes 5:22–23 and does not keep a stub card", () => {
