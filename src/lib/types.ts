@@ -21,6 +21,7 @@ export type VerseJudgment = {
   book: string;
   chapter: number;
   verse: number;
+  endVerse: number;
   displayRef: string;
   text: string;
   relation: Relation;

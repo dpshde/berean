@@ -1,4 +1,4 @@
-import { stitchJudgments } from "./stitch.ts";
+import { completeIncompletePassages, dropCoveredPassages, stitchJudgments } from "./stitch.ts";
 import type {
   BeamChip,
   Candidate,
@@ -61,6 +61,7 @@ export function composeVerdict(
       book: candidate.book,
       chapter: candidate.chapter,
       verse: candidate.verse,
+      endVerse: candidate.verse,
       displayRef: candidate.displayRef,
       text: candidate.text,
       relation: asRelation(answer?.choice ?? "silent"),
@@ -79,7 +80,9 @@ export function composeVerdict(
       )
     : judgments;
 
-  const evidence = stitchJudgments(filtered, scoreOf, { requireSameRelation: Boolean(verdict) })
+  const evidence = dropCoveredPassages(
+    completeIncompletePassages(stitchJudgments(filtered, scoreOf, { requireSameRelation: Boolean(verdict) })),
+  )
     .sort((a, b) => scoreOf(b) - scoreOf(a))
     .slice(0, 7);
 

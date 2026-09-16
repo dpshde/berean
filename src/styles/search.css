@@ -365,29 +365,6 @@ input[type="text"].query-input::placeholder {
   color: var(--bad) !important;
 }
 
-.lens {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-}
-
-.lens-chip {
-  font-family: var(--mono);
-  font-size: 0.58rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-secondary);
-  border: 1px solid var(--border-subtle);
-  background: var(--panel-elevated);
-  padding: 0.22rem 0.45rem;
-}
-
-.lens-chip--winner {
-  color: var(--quick-go-fg-strong);
-  border-color: color-mix(in srgb, var(--quick-go) 65%, var(--border) 35%);
-  background: color-mix(in srgb, var(--quick-go) 18%, var(--panel) 82%);
-}
-
 .results-wrapper {
   display: flex;
   flex: 1;

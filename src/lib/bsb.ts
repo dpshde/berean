@@ -86,6 +86,18 @@ export function getVerse(id: string): Verse | undefined {
   return index == null ? undefined : all[index];
 }
 
+/** Next verse in the same chapter, or undefined at a chapter/book boundary. */
+export function verseAfter(book: string, chapter: number, verse: number): Verse | undefined {
+  const all = loadVerses();
+  const index = all.findIndex(
+    (item) => item.book === book && item.chapter === chapter && item.verse === verse,
+  );
+  if (index < 0) return undefined;
+  const next = all[index + 1];
+  if (!next || next.book !== book || next.chapter !== chapter) return undefined;
+  return next;
+}
+
 export function neighborContext(id: string): string {
   const all = loadVerses();
   const index = byId?.get(id);

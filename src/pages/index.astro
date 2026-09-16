@@ -196,16 +196,8 @@ import "../styles/search.css";
         questionKind?: string;
         verdict?: string | null;
         evidence: { displayRef: string; text: string; relation: string }[];
-        beam?: { path: string; kind: string }[];
       }) => {
         const view = statusView({ questionKind: payload.questionKind, verdict: payload.verdict });
-        const beam = payload.beam ?? [];
-        const lens = beam
-          .map(
-            (chip) =>
-              `<span class="lens-chip lens-chip--${escapeHtml(chip.kind)}">${escapeHtml(chip.path)}</span>`,
-          )
-          .join("");
         const badge = view.showVerdict
           ? `<span class="search-status-badge search-status-badge--${escapeHtml(payload.verdict ?? "")}">${escapeHtml(view.verdictLabel)}</span>
             <span class="search-status-meta">${escapeHtml(view.verdictMeta)}</span>`
@@ -214,7 +206,6 @@ import "../styles/search.css";
           <div class="search-status">
             ${badge}
           </div>
-          ${lens ? `<div class="lens" aria-label="Jev zoom beam">${lens}</div>` : ""}
         `);
         if (resultsWrapper) resultsWrapper.classList.toggle("is-empty", payload.evidence.length === 0);
         if (!results) return;
@@ -259,7 +250,6 @@ import "../styles/search.css";
             questionKind?: string;
             verdict?: string | null;
             evidence?: { displayRef: string; text: string; relation: string }[];
-            beam?: { path: string; kind: string }[];
           };
           if (!response.ok || payload.error || !payload.questionKind || !payload.evidence) {
             renderError(payload.error ?? "Search failed.");
@@ -269,7 +259,6 @@ import "../styles/search.css";
             questionKind: payload.questionKind,
             verdict: payload.verdict ?? null,
             evidence: payload.evidence,
-            beam: payload.beam,
           });
         } catch (err) {
           renderError(err instanceof Error ? err.message : "Search failed.");
