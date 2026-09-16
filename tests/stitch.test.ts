@@ -20,6 +20,7 @@ function judgment(
     confidence: 0.7,
     searchScore: 0,
     endVerse: overrides.endVerse ?? overrides.verse,
+    href: `https://route.bible/x.${overrides.chapter}.${overrides.verse}`,
     ...overrides,
   };
 }

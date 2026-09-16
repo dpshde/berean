@@ -476,6 +476,21 @@ input[type="text"].query-input::placeholder {
   border-bottom: none;
 }
 
+.card__link {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+  width: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+.card__link:hover .card__ref,
+.card__link:focus-visible .card__ref {
+  color: var(--accent-strong);
+}
+
 .card__ref {
   margin: 0;
   font-family: var(--serif);

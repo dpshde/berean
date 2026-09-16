@@ -1,6 +1,12 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { asQuestionKind, buildQuestions, QUESTION_KIND_CONFIDENCE } from "../src/lib/questions.ts";
+import {
+  asQuestionKind,
+  buildQuestions,
+  buildRerankQuestions,
+  QUESTION_KIND_CONFIDENCE,
+  rerankScores,
+} from "../src/lib/questions.ts";
 import type { Candidate } from "../src/lib/types.ts";
 
 const john: Candidate = {
@@ -29,4 +35,10 @@ test("buildQuestions asks question_kind in the same request", () => {
   assert.equal(questions.question_kind?.type, "choice");
   assert.equal(questions.supported?.type, "noul");
   assert.equal(questions.rel_0?.type, "choice");
+});
+
+test("buildRerankQuestions asks one noul per shortlist verse", () => {
+  const questions = buildRerankQuestions([john]);
+  assert.equal(questions.rank_0?.type, "noul");
+  assert.deepEqual(rerankScores({ rank_0: { type: "noul", noul: 0.8 } }, 1), [0.8]);
 });

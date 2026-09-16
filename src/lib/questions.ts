@@ -112,3 +112,29 @@ export function buildQuestions(candidates: Candidate[]): Questions {
 
   return questions;
 }
+
+export function buildRerankQuestions(candidates: Candidate[]): Questions {
+  const questions: Questions = {};
+  for (const [index, verse] of candidates.entries()) {
+    questions[`rank_${index}`] = noul(
+      {
+        question: `Does \`verses[${index}].text\` address \`claim\`?`,
+        inspect: ["claim", `verses[${index}].text`],
+        focus:
+          "Direct statements, commands, or illustrations of the query outrank a shared word. Judge the verse, not neighboring tradition.",
+      },
+      {
+        true: `${verse.displayRef} states, defines, commands, or directly illustrates what the query asks about`,
+        false: `${verse.displayRef} is off-topic or only loosely related`,
+      },
+    );
+  }
+  return questions;
+}
+
+export function rerankScores(answers: Record<string, { type?: string; noul?: number }>, count: number): number[] {
+  return Array.from({ length: count }, (_, index) => {
+    const answer = answers[`rank_${index}`];
+    return answer && "noul" in answer ? (answer.noul ?? 0) : 0;
+  });
+}

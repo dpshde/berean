@@ -195,7 +195,7 @@ import "../styles/search.css";
       const renderResult = (payload: {
         questionKind?: string;
         verdict?: string | null;
-        evidence: { displayRef: string; text: string; relation: string }[];
+        evidence: { displayRef: string; href?: string; text: string; relation: string }[];
       }) => {
         const view = statusView({ questionKind: payload.questionKind, verdict: payload.verdict });
         const badge = view.showVerdict
@@ -217,18 +217,21 @@ import "../styles/search.css";
           return;
         }
         results.innerHTML = payload.evidence
-          .map(
-            (verse, index) => `
+          .map((verse, index) => {
+            const href = verse.href || "#";
+            return `
               <article class="card${index === 0 ? " is-selected" : ""}">
-                <cite class="card__ref">${escapeHtml(verse.displayRef)}</cite>
-                <p class="card__text">${escapeHtml(verse.text)}</p>
+                <a class="card__link" href="${escapeHtml(href)}" target="_blank" rel="noopener">
+                  <cite class="card__ref">${escapeHtml(verse.displayRef)}</cite>
+                  <p class="card__text">${escapeHtml(verse.text)}</p>
+                </a>
                 ${
                   view.showRelations
                     ? `<span class="card__relation card__relation--${escapeHtml(verse.relation)}">${escapeHtml(verse.relation)}</span>`
                     : ""
                 }
-              </article>`,
-          )
+              </article>`;
+          })
           .join("");
       };
 
@@ -249,7 +252,7 @@ import "../styles/search.css";
             error?: string;
             questionKind?: string;
             verdict?: string | null;
-            evidence?: { displayRef: string; text: string; relation: string }[];
+            evidence?: { displayRef: string; href?: string; text: string; relation: string }[];
           };
           if (!response.ok || payload.error || !payload.questionKind || !payload.evidence) {
             renderError(payload.error ?? "Search failed.");

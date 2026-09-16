@@ -1,7 +1,18 @@
 import { TypeSafeClient } from "@typesafe-ai/sdk";
 import { composeVerdict, type RelationAnswer } from "./compose.ts";
-import { asQuestionKind, buildQuestions, buildState, questionKindQuestion } from "./questions.ts";
+import { candidatesForPassage, parsePassageQuery } from "./lookup.ts";
+import {
+  asQuestionKind,
+  buildQuestions,
+  buildRerankQuestions,
+  buildState,
+  questionKindQuestion,
+  rerankScores,
+} from "./questions.ts";
+import { applyRerankScores, FREE_FORM_EVIDENCE, mergeRecall, POLAR_EVIDENCE, RERANK_CAP } from "./recall.ts";
+import { retrieve } from "./search.ts";
 import type { ClaimVerdict, QuestionKind } from "./types.ts";
+import { expandXrefs } from "./xrefs.ts";
 import { versesToCandidates, zoomToVerses } from "./zoom.ts";
 
 const MODEL = "jev-latest";
@@ -14,20 +25,43 @@ function client(): TypeSafeClient {
   return new TypeSafeClient({ apiKey, timeout: 180_000, defaultModel: MODEL });
 }
 
+function silentRelations(count: number): RelationAnswer[] {
+  return Array.from({ length: count }, () => ({
+    choice: "silent",
+    probabilities: { silent: 1, supports: 0, contradicts: 0 },
+    confidence: 0,
+  }));
+}
+
 export async function judgeClaim(claim: string): Promise<ClaimVerdict> {
   const trimmed = claim.trim();
   if (!trimmed) {
     throw new Error("Write a claim.");
   }
 
+  const passage = parsePassageQuery(trimmed);
+  if (passage) {
+    const lookedUp = candidatesForPassage(passage);
+    if (lookedUp.length > 0) {
+      return composeVerdict(
+        trimmed,
+        expandXrefs(lookedUp, 1),
+        { questionKind: "free_form", supported: 0, denied: 0, relations: silentRelations(lookedUp.length) },
+        [],
+        lookedUp.length + 8,
+      );
+    }
+  }
+
   const typesafe = client();
   const zoomed = await zoomToVerses(trimmed, typesafe);
-  const candidates = versesToCandidates(
+  const beamCandidates = versesToCandidates(
     zoomed.verses,
     zoomed.beam.map((chip) => chip.score),
   );
+  const shortlist = mergeRecall(beamCandidates, retrieve(trimmed), RERANK_CAP);
 
-  if (candidates.length === 0) {
+  if (shortlist.length === 0) {
     const kindResponse = await typesafe.systemOne({
       state: { claim: trimmed },
       questions: { question_kind: questionKindQuestion() },
@@ -47,9 +81,13 @@ export async function judgeClaim(claim: string): Promise<ClaimVerdict> {
     );
   }
 
+  const polarSlice = beamCandidates.length > 0 ? beamCandidates : shortlist.slice(0, 3);
   const response = await typesafe.systemOne({
-    state: buildState(trimmed, candidates),
-    questions: buildQuestions(candidates),
+    state: buildState(trimmed, shortlist),
+    questions: {
+      ...buildQuestions(polarSlice),
+      ...buildRerankQuestions(shortlist),
+    },
     model: MODEL,
   });
 
@@ -60,9 +98,9 @@ export async function judgeClaim(claim: string): Promise<ClaimVerdict> {
       ? { choice: kindAnswer.choice, confidence: kindAnswer.confidence }
       : undefined,
   );
-  const supported = "noul" in answers.supported ? answers.supported.noul : 0;
-  const denied = "noul" in answers.denied ? answers.denied.noul : 0;
-  const relations: RelationAnswer[] = candidates.map((_, index) => {
+  const supported = answers.supported && "noul" in answers.supported ? answers.supported.noul : 0;
+  const denied = answers.denied && "noul" in answers.denied ? answers.denied.noul : 0;
+  const relations: RelationAnswer[] = polarSlice.map((_, index) => {
     const answer = answers[`rel_${index}`];
     if (!answer || answer.type !== "choice") {
       return { choice: "silent", probabilities: { silent: 1, supports: 0, contradicts: 0 }, confidence: 0 };
@@ -74,5 +112,31 @@ export async function judgeClaim(claim: string): Promise<ClaimVerdict> {
     };
   });
 
-  return composeVerdict(trimmed, candidates, { questionKind, supported, denied, relations }, zoomed.beam);
+  if (questionKind === "yes_no") {
+    return composeVerdict(
+      trimmed,
+      polarSlice,
+      { questionKind, supported, denied, relations },
+      zoomed.beam,
+      POLAR_EVIDENCE,
+    );
+  }
+
+  const ranked = applyRerankScores(shortlist, rerankScores(answers, shortlist.length)).slice(
+    0,
+    FREE_FORM_EVIDENCE,
+  );
+  const expanded = expandXrefs(ranked);
+  return composeVerdict(
+    trimmed,
+    expanded,
+    {
+      questionKind: "free_form",
+      supported,
+      denied,
+      relations: silentRelations(expanded.length),
+    },
+    zoomed.beam,
+    expanded.length,
+  );
 }

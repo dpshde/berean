@@ -46,6 +46,7 @@ test("yes when scripture supports the claim", () => {
   assert.equal(result.questionKind, "yes_no");
   assert.equal(result.verdict, "yes");
   assert.equal(result.evidence[0]?.displayRef, "John 1:1");
+  assert.equal(result.evidence[0]?.href, "https://route.bible/jhn.1.1");
   assert.deepEqual(result.beam, []);
 });
 

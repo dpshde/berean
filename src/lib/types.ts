@@ -23,6 +23,7 @@ export type VerseJudgment = {
   verse: number;
   endVerse: number;
   displayRef: string;
+  href: string;
   text: string;
   relation: Relation;
   probabilities: Record<Relation, number>;

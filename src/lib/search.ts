@@ -1,8 +1,9 @@
 import MiniSearch from "minisearch";
 import { displayRef, getVerse, loadVerses, neighborContext } from "./bsb.ts";
+import { LEXICAL_LIMIT } from "./recall.ts";
 import type { Candidate, Verse } from "./types.ts";
 
-const SHORTLIST = 20;
+const SHORTLIST = LEXICAL_LIMIT;
 
 const STOP = new Set([
   "the",

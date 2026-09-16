@@ -1,3 +1,5 @@
+import { FREE_FORM_EVIDENCE, POLAR_EVIDENCE } from "./recall.ts";
+import { routeHref } from "./route.ts";
 import { completeIncompletePassages, dropCoveredPassages, stitchJudgments } from "./stitch.ts";
 import type {
   BeamChip,
@@ -39,6 +41,7 @@ export function composeVerdict(
   candidates: Candidate[],
   raw: RawJudgment,
   beam: BeamChip[] = [],
+  evidenceLimit?: number,
 ): ClaimVerdict {
   const supported = raw.supported;
   const denied = raw.denied;
@@ -63,6 +66,7 @@ export function composeVerdict(
       verse: candidate.verse,
       endVerse: candidate.verse,
       displayRef: candidate.displayRef,
+      href: routeHref(candidate.book, candidate.chapter, candidate.verse),
       text: candidate.text,
       relation: asRelation(answer?.choice ?? "silent"),
       probabilities,
@@ -80,11 +84,16 @@ export function composeVerdict(
       )
     : judgments;
 
+  const limit = evidenceLimit ?? (verdict ? POLAR_EVIDENCE : FREE_FORM_EVIDENCE);
   const evidence = dropCoveredPassages(
     completeIncompletePassages(stitchJudgments(filtered, scoreOf, { requireSameRelation: Boolean(verdict) })),
   )
     .sort((a, b) => scoreOf(b) - scoreOf(a))
-    .slice(0, 7);
+    .slice(0, limit)
+    .map((item) => ({
+      ...item,
+      href: routeHref(item.book, item.chapter, item.verse, item.endVerse),
+    }));
 
   return {
     claim,

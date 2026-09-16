@@ -86,6 +86,12 @@ export function getVerse(id: string): Verse | undefined {
   return index == null ? undefined : all[index];
 }
 
+export function getVerseAt(book: string, chapter: number, verse: number): Verse | undefined {
+  return loadVerses().find(
+    (item) => item.book === book && item.chapter === chapter && item.verse === verse,
+  );
+}
+
 /** Next verse in the same chapter, or undefined at a chapter/book boundary. */
 export function verseAfter(book: string, chapter: number, verse: number): Verse | undefined {
   const all = loadVerses();

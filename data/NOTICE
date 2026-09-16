@@ -6,3 +6,9 @@ Source: https://berean.bible
 Packed from the public-domain verse export used across Selah Tools.
 
 Do not treat this pack as a substitute for reading Scripture in canonical order.
+
+Cross-references (`xrefs.json`)
+Starter pack converted from Midvash bible-cross-references (CC BY 4.0),
+themed clusters mapped onto BSB verse ids. Not a full TSK dump.
+Source: https://github.com/midvash/bible-cross-references
+Attribution: Midvash — https://midvash.com

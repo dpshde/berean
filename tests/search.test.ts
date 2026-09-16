@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { loadVerses } from "../src/lib/bsb.ts";
-import { retrieveFrom } from "../src/lib/search.ts";
+import { retrieve, retrieveFrom } from "../src/lib/search.ts";
 import type { Verse } from "../src/lib/types.ts";
 
 const verses: Verse[] = [
@@ -36,6 +36,11 @@ test("retrieves the verse that names the claim", () => {
 test("retrieves creation for a creation claim", () => {
   const hits = retrieveFrom(verses, "God created the heavens");
   assert.equal(hits[0]?.id, "Gen.1.1");
+});
+
+test("lexical recall finds many lust verses", () => {
+  const hits = retrieve("lust", 80);
+  assert.ok(hits.length > 3, `expected more than 3 hits, got ${hits.length}`);
 });
 
 test("packs the full BSB", () => {
