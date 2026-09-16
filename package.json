@@ -1,0 +1,25 @@
+{
+  "name": "berean",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Yes or no, then the Berean Standard Bible verses that best support the verdict.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "test": "node --experimental-strip-types --test tests/*.test.ts",
+    "pack-bsb": "node scripts/pack-bsb.mjs"
+  },
+  "dependencies": {
+    "@astrojs/node": "^11.1.5",
+    "@typesafe-ai/sdk": "^0.6.0",
+    "astro": "^7.3.2",
+    "minisearch": "^7.2.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@types/node": "^22.20.3",
+    "typescript": "^5.9.2"
+  }
+}

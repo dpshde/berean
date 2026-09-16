@@ -1,0 +1,174 @@
+---
+import { judgeClaim } from "../lib/verdict.ts";
+import type { ClaimVerdict } from "../lib/types.ts";
+
+let result: ClaimVerdict | null = null;
+let error: string | null = null;
+let claim = "";
+
+if (Astro.request.method === "POST") {
+  const form = await Astro.request.formData();
+  claim = String(form.get("claim") ?? "");
+  try {
+    result = await judgeClaim(claim);
+  } catch (err) {
+    error = err instanceof Error ? err.message : "The claim could not be judged.";
+  }
+}
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Berean</title>
+    <meta
+      name="description"
+      content="Ask a claim. Get yes or no from the Berean Standard Bible, then the verses that best support that verdict."
+    />
+    <style>
+      :root {
+        --paper: #f4efe6;
+        --ink: #1c1914;
+        --mute: #6f675c;
+        --rule: #d8d0c2;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      html,
+      body {
+        background: var(--paper);
+        color: var(--ink);
+      }
+      body {
+        font: 22px/1.45 "Iowan Old Style", Palatino, "Palatino Linotype", Charter, Georgia, serif;
+        min-height: 100dvh;
+        padding: 12vh 1.25rem 4rem;
+      }
+      main {
+        max-width: 34rem;
+        margin: 0 auto;
+      }
+      form {
+        display: flex;
+        gap: 0.75rem;
+        align-items: baseline;
+        border-bottom: 1px solid var(--ink);
+        padding-bottom: 0.35rem;
+      }
+      input {
+        flex: 1;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        outline: none;
+        min-width: 0;
+      }
+      button {
+        border: 0;
+        background: transparent;
+        color: var(--mute);
+        font: inherit;
+        cursor: pointer;
+        padding: 0;
+      }
+      button:hover,
+      button:focus-visible {
+        color: var(--ink);
+      }
+      .verdict {
+        margin: 2.75rem 0 1.75rem;
+        font-size: clamp(4.5rem, 18vw, 8rem);
+        line-height: 0.85;
+        letter-spacing: -0.04em;
+        font-weight: 400;
+      }
+      .meta {
+        color: var(--mute);
+        font-size: 0.95rem;
+        margin: -1.1rem 0 2rem;
+      }
+      ol {
+        list-style: none;
+        padding: 0;
+        display: grid;
+        gap: 1.6rem;
+      }
+      cite {
+        display: block;
+        font-style: normal;
+        font-size: 0.82rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--mute);
+        margin-bottom: 0.3rem;
+      }
+      .error,
+      .empty {
+        margin-top: 2rem;
+        color: var(--mute);
+      }
+      footer {
+        margin-top: 4rem;
+        color: var(--mute);
+        font-size: 0.85rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <form method="post">
+        <input
+          name="claim"
+          value={claim}
+          required
+          maxlength="400"
+          autocomplete="off"
+          autofocus
+          placeholder="a claim"
+          aria-label="Claim"
+        />
+        <button type="submit">yes or no</button>
+      </form>
+
+      {error && <p class="error" role="alert">{error}</p>}
+
+      {result && (
+        <>
+          <p class="verdict">{result.verdict === "yes" ? "Yes" : "No"}</p>
+          <p class="meta">
+            {result.verdict === "yes" ? "supported" : "not supported"}
+            · BSB
+          </p>
+          {result.evidence.length === 0 ? (
+            <p class="empty">No verse in the shortlist addressed this claim.</p>
+          ) : (
+            <ol>
+              {result.evidence.map((verse) => (
+                <li>
+                  <cite>{verse.displayRef}</cite>
+                  <p>{verse.text}</p>
+                </li>
+              ))}
+            </ol>
+          )}
+        </>
+      )}
+
+      <footer>Berean Standard Bible. Scripture judges the claim.</footer>
+    </main>
+    <script>
+      const form = document.querySelector("form");
+      const button = document.querySelector("button");
+      form?.addEventListener("submit", () => {
+        if (button) {
+          button.disabled = true;
+          button.textContent = "…";
+        }
+      });
+    </script>
+  </body>
+</html>

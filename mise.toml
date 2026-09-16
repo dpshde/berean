@@ -1,0 +1,12 @@
+min_version = "2026.8.0"
+
+[tools]
+node = "22"
+
+[tasks.dev]
+description = "Serve Berean at http://localhost:4321"
+alias = ["start"]
+run = "npm run dev"
+
+[tasks.test]
+run = "npm test"
