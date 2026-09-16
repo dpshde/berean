@@ -1,11 +1,5 @@
 ---
 import "../styles/search.css";
-
-const examples = [
-  "hope",
-  "John 3:16",
-  "love your enemies",
-];
 ---
 
 <html lang="en">
@@ -106,13 +100,6 @@ const examples = [
             </button>
           </div>
         </form>
-        <div class="topic-chips" aria-label="Suggested topics">
-          {examples.map((example) => (
-            <button class="topic-chip" type="button" data-query={example}>
-              {example}
-            </button>
-          ))}
-        </div>
       </section>
 
       <div id="statusBar" class="status-bar" aria-live="polite" hidden>
@@ -284,14 +271,6 @@ const examples = [
         event.preventDefault();
         if (input instanceof HTMLInputElement) void search(input.value);
       });
-
-      for (const chip of document.querySelectorAll("[data-query]")) {
-        chip.addEventListener("click", () => {
-          if (!(input instanceof HTMLInputElement)) return;
-          input.value = chip.getAttribute("data-query") ?? "";
-          void search(input.value);
-        });
-      }
     </script>
   </body>
 </html>
