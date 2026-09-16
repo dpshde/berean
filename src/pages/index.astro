@@ -222,8 +222,8 @@ import "../styles/search.css";
         }
         results.innerHTML = payload.evidence
           .map(
-            (verse) => `
-              <article class="card">
+            (verse, index) => `
+              <article class="card${index === 0 ? " is-selected" : ""}">
                 <cite class="card__ref">${escapeHtml(verse.displayRef)}</cite>
                 <p class="card__text">${escapeHtml(verse.text)}</p>
                 <span class="card__relation card__relation--${escapeHtml(verse.relation)}">${escapeHtml(verse.relation)}</span>
