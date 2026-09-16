@@ -1,7 +1,7 @@
 import { TypeSafeClient } from "@typesafe-ai/sdk";
 import { composeVerdict, type RelationAnswer } from "./compose.ts";
-import { buildQuestions, buildState } from "./questions.ts";
-import type { ClaimVerdict } from "./types.ts";
+import { asQuestionKind, buildQuestions, buildState, questionKindQuestion } from "./questions.ts";
+import type { ClaimVerdict, QuestionKind } from "./types.ts";
 import { versesToCandidates, zoomToVerses } from "./zoom.ts";
 
 const MODEL = "jev-latest";
@@ -28,15 +28,23 @@ export async function judgeClaim(claim: string): Promise<ClaimVerdict> {
   );
 
   if (candidates.length === 0) {
-    return {
-      claim: trimmed,
-      verdict: "no",
-      supported: 0,
-      denied: 0,
-      evidence: [],
-      beam: zoomed.beam,
-      translation: "Berean Standard Bible",
-    };
+    const kindResponse = await typesafe.systemOne({
+      state: { claim: trimmed },
+      questions: { question_kind: questionKindQuestion() },
+      model: MODEL,
+    });
+    const kindAnswer = kindResponse.answers.question_kind;
+    const questionKind: QuestionKind = asQuestionKind(
+      kindAnswer && kindAnswer.type === "choice"
+        ? { choice: kindAnswer.choice, confidence: kindAnswer.confidence }
+        : undefined,
+    );
+    return composeVerdict(
+      trimmed,
+      [],
+      { questionKind, supported: 0, denied: 0, relations: [] },
+      zoomed.beam,
+    );
   }
 
   const response = await typesafe.systemOne({
@@ -46,6 +54,12 @@ export async function judgeClaim(claim: string): Promise<ClaimVerdict> {
   });
 
   const answers = response.answers;
+  const kindAnswer = answers.question_kind;
+  const questionKind: QuestionKind = asQuestionKind(
+    kindAnswer && kindAnswer.type === "choice"
+      ? { choice: kindAnswer.choice, confidence: kindAnswer.confidence }
+      : undefined,
+  );
   const supported = "noul" in answers.supported ? answers.supported.noul : 0;
   const denied = "noul" in answers.denied ? answers.denied.noul : 0;
   const relations: RelationAnswer[] = candidates.map((_, index) => {
@@ -60,5 +74,5 @@ export async function judgeClaim(claim: string): Promise<ClaimVerdict> {
     };
   });
 
-  return composeVerdict(trimmed, candidates, { supported, denied, relations }, zoomed.beam);
+  return composeVerdict(trimmed, candidates, { questionKind, supported, denied, relations }, zoomed.beam);
 }

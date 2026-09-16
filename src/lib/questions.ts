@@ -1,5 +1,38 @@
 import { choice, noul, type Questions } from "@typesafe-ai/sdk";
-import type { Candidate } from "./types.ts";
+import type { Candidate, QuestionKind } from "./types.ts";
+
+export const QUESTION_KIND_CONFIDENCE = 0.5;
+
+export function questionKindQuestion() {
+  return choice(
+    {
+      question: "Is `claim` a yes-or-no question?",
+      inspect: ["claim"],
+      focus:
+        "Judge only the form of the request. Do not decide whether scripture answers it, and do not judge truth.",
+    },
+    {
+      yes_no: {
+        what: "A polar question: the natural answer is yes or no.",
+        not_for:
+          "Topics, phrases, passage references, open questions (what/why/how/who), or statements that are not asking for yes or no.",
+        examples: ["Is Jesus God?", "Did Jesus rise from the dead?", "Should Christians tithe?"],
+      },
+      free_form: {
+        what: "Anything that is not a yes-or-no question: a topic, phrase, passage, open question, or a statement.",
+        not_for: "Questions whose natural answer is yes or no.",
+        examples: ["John 3:16", "hope", "What is love?", "love your enemies", "Jesus is the Word of God"],
+      },
+    },
+  );
+}
+
+export function asQuestionKind(answer: { choice?: string; confidence?: number } | undefined): QuestionKind {
+  if (answer?.choice === "yes_no" && (answer.confidence ?? 0) >= QUESTION_KIND_CONFIDENCE) {
+    return "yes_no";
+  }
+  return "free_form";
+}
 
 export function buildState(claim: string, candidates: Candidate[]) {
   return {
@@ -23,6 +56,7 @@ export function buildQuestions(candidates: Candidate[]): Questions {
   };
 
   const questions: Questions = {
+    question_kind: questionKindQuestion(),
     supported: noul(
       {
         question: "Does the supplied Berean Standard Bible scripture support `claim` as true?",

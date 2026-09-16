@@ -14,6 +14,8 @@ export type Candidate = Verse & {
 
 export type Relation = "supports" | "contradicts" | "silent";
 
+export type QuestionKind = "yes_no" | "free_form";
+
 export type VerseJudgment = {
   id: string;
   book: string;
@@ -24,6 +26,7 @@ export type VerseJudgment = {
   relation: Relation;
   probabilities: Record<Relation, number>;
   confidence: number;
+  searchScore: number;
 };
 
 export type Verdict = "yes" | "no";
@@ -36,7 +39,8 @@ export type BeamChip = {
 
 export type ClaimVerdict = {
   claim: string;
-  verdict: Verdict;
+  questionKind: QuestionKind;
+  verdict: Verdict | null;
   supported: number;
   denied: number;
   evidence: VerseJudgment[];

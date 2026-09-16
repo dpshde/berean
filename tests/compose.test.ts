@@ -26,7 +26,8 @@ const silent: Candidate = {
 };
 
 test("yes when scripture supports the claim", () => {
-  const result = composeVerdict("Jesus is the Word of God", [john, silent], {
+  const result = composeVerdict("Is Jesus the Word of God?", [john, silent], {
+    questionKind: "yes_no",
     supported: 0.91,
     denied: 0.08,
     relations: [
@@ -42,6 +43,7 @@ test("yes when scripture supports the claim", () => {
       },
     ],
   });
+  assert.equal(result.questionKind, "yes_no");
   assert.equal(result.verdict, "yes");
   assert.equal(result.evidence[0]?.displayRef, "John 1:1");
   assert.deepEqual(result.beam, []);
@@ -50,9 +52,10 @@ test("yes when scripture supports the claim", () => {
 test("composeVerdict keeps the zoom beam chips", () => {
   const beam = [{ path: "John 1:1", score: 0.8, kind: "winner" as const }];
   const result = composeVerdict(
-    "Jesus is the Word of God",
+    "Is Jesus the Word of God?",
     [john],
     {
+      questionKind: "yes_no",
       supported: 0.91,
       denied: 0.08,
       relations: [
@@ -69,7 +72,8 @@ test("composeVerdict keeps the zoom beam chips", () => {
 });
 
 test("no when scripture denies the claim", () => {
-  const result = composeVerdict("There is no God", [john], {
+  const result = composeVerdict("Is there no God?", [john], {
+    questionKind: "yes_no",
     supported: 0.04,
     denied: 0.88,
     relations: [
@@ -95,7 +99,8 @@ test("composeVerdict stitches consecutive same-relation verses", () => {
     context: "",
     searchScore: 0.8,
   };
-  const result = composeVerdict("Jesus is the Word of God", [john, john2], {
+  const result = composeVerdict("Is Jesus the Word of God?", [john, john2], {
+    questionKind: "yes_no",
     supported: 0.91,
     denied: 0.08,
     relations: [
@@ -121,7 +126,8 @@ test("composeVerdict stitches consecutive same-relation verses", () => {
 });
 
 test("no when support is below threshold", () => {
-  const result = composeVerdict("Christians must tithe exactly ten percent", [silent], {
+  const result = composeVerdict("Must Christians tithe exactly ten percent?", [silent], {
+    questionKind: "yes_no",
     supported: 0.41,
     denied: 0.22,
     relations: [
@@ -133,4 +139,45 @@ test("no when support is below threshold", () => {
     ],
   });
   assert.equal(result.verdict, "no");
+});
+
+test("free-form queries omit a yes/no even when support is high", () => {
+  const result = composeVerdict("John 1:1", [john], {
+    questionKind: "free_form",
+    supported: 0.91,
+    denied: 0.08,
+    relations: [
+      {
+        choice: "supports",
+        probabilities: { supports: 0.94, contradicts: 0.02, silent: 0.04 },
+        confidence: 0.9,
+      },
+    ],
+  });
+  assert.equal(result.questionKind, "free_form");
+  assert.equal(result.verdict, null);
+  assert.equal(result.evidence[0]?.displayRef, "John 1:1");
+});
+
+test("free-form ranking uses beam score and keeps silent verses", () => {
+  const result = composeVerdict("hope", [silent, john], {
+    questionKind: "free_form",
+    supported: 0.2,
+    denied: 0.1,
+    relations: [
+      {
+        choice: "silent",
+        probabilities: { supports: 0.1, contradicts: 0.05, silent: 0.85 },
+        confidence: 0.8,
+      },
+      {
+        choice: "silent",
+        probabilities: { supports: 0.1, contradicts: 0.05, silent: 0.85 },
+        confidence: 0.8,
+      },
+    ],
+  });
+  assert.equal(result.verdict, null);
+  assert.equal(result.evidence[0]?.id, "Jhn.1.1");
+  assert.equal(result.evidence.length, 2);
 });

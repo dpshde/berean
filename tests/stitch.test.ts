@@ -12,6 +12,7 @@ function judgment(
     relation: "supports",
     probabilities: { supports: 0.8, contradicts: 0.1, silent: 0.1 },
     confidence: 0.7,
+    searchScore: 0,
     ...overrides,
   };
 }
@@ -114,4 +115,10 @@ test("stitchJudgments does not merge mixed relations", () => {
   assert.equal(result.length, 2);
   assert.equal(result[0]?.relation, "supports");
   assert.equal(result[1]?.relation, "contradicts");
+});
+
+test("stitchJudgments can ignore relation for free-form passages", () => {
+  const denied = { ...john2, relation: "contradicts" as const };
+  const [stitched] = stitchJudgments([john1, denied], () => 0, { requireSameRelation: false });
+  assert.equal(stitched?.displayRef, "John 1:1–2");
 });

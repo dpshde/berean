@@ -9,7 +9,7 @@ import "../styles/search.css";
     <title>Berean</title>
     <meta
       name="description"
-      content="Search the Berean Standard Bible by topic, passage, or phrase. The page prints the verdict, then the verses."
+      content="Search the Berean Standard Bible by topic, passage, or phrase. Polar questions get a yes or no; everything else gets the verses."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -125,6 +125,8 @@ import "../styles/search.css";
       </div>
     </main>
     <script>
+      import { statusView } from "../lib/status-view.ts";
+
       const form = document.getElementById("claimForm");
       const input = document.getElementById("queryInput");
       const submit = document.getElementById("querySubmit");
@@ -191,12 +193,12 @@ import "../styles/search.css";
       };
 
       const renderResult = (payload: {
-        verdict: string;
+        questionKind?: string;
+        verdict?: string | null;
         evidence: { displayRef: string; text: string; relation: string }[];
         beam?: { path: string; kind: string }[];
       }) => {
-        const verdictLabel = payload.verdict === "yes" ? "Yes" : "No";
-        const verdictMeta = payload.verdict === "yes" ? "supported · BSB" : "not supported · BSB";
+        const view = statusView({ questionKind: payload.questionKind, verdict: payload.verdict });
         const beam = payload.beam ?? [];
         const lens = beam
           .map(
@@ -204,10 +206,13 @@ import "../styles/search.css";
               `<span class="lens-chip lens-chip--${escapeHtml(chip.kind)}">${escapeHtml(chip.path)}</span>`,
           )
           .join("");
+        const badge = view.showVerdict
+          ? `<span class="search-status-badge search-status-badge--${escapeHtml(payload.verdict ?? "")}">${escapeHtml(view.verdictLabel)}</span>
+            <span class="search-status-meta">${escapeHtml(view.verdictMeta)}</span>`
+          : `<span class="search-status-meta">${escapeHtml(view.verdictMeta)}</span>`;
         showStatus(`
           <div class="search-status">
-            <span class="search-status-badge search-status-badge--${escapeHtml(payload.verdict)}">${verdictLabel}</span>
-            <span class="search-status-meta">${verdictMeta}</span>
+            ${badge}
           </div>
           ${lens ? `<div class="lens" aria-label="Jev zoom beam">${lens}</div>` : ""}
         `);
@@ -226,7 +231,11 @@ import "../styles/search.css";
               <article class="card${index === 0 ? " is-selected" : ""}">
                 <cite class="card__ref">${escapeHtml(verse.displayRef)}</cite>
                 <p class="card__text">${escapeHtml(verse.text)}</p>
-                <span class="card__relation card__relation--${escapeHtml(verse.relation)}">${escapeHtml(verse.relation)}</span>
+                ${
+                  view.showRelations
+                    ? `<span class="card__relation card__relation--${escapeHtml(verse.relation)}">${escapeHtml(verse.relation)}</span>`
+                    : ""
+                }
               </article>`,
           )
           .join("");
@@ -247,16 +256,18 @@ import "../styles/search.css";
           });
           const payload = (await response.json()) as {
             error?: string;
-            verdict?: string;
+            questionKind?: string;
+            verdict?: string | null;
             evidence?: { displayRef: string; text: string; relation: string }[];
             beam?: { path: string; kind: string }[];
           };
-          if (!response.ok || payload.error || !payload.verdict || !payload.evidence) {
+          if (!response.ok || payload.error || !payload.questionKind || !payload.evidence) {
             renderError(payload.error ?? "Search failed.");
             return;
           }
           renderResult({
-            verdict: payload.verdict,
+            questionKind: payload.questionKind,
+            verdict: payload.verdict ?? null,
             evidence: payload.evidence,
             beam: payload.beam,
           });

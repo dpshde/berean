@@ -12,12 +12,21 @@ function byCanon(left: Stitchable, right: Stitchable): number {
   return left.verse - right.verse;
 }
 
-export function canStitch(left: Stitchable, right: Stitchable): boolean {
+export type StitchOptions = {
+  requireSameRelation?: boolean;
+};
+
+export function canStitch(
+  left: Stitchable,
+  right: Stitchable,
+  options: StitchOptions = {},
+): boolean {
+  const requireSameRelation = options.requireSameRelation ?? true;
   return (
     left.book === right.book &&
     left.chapter === right.chapter &&
     right.verse === left.verse + 1 &&
-    left.relation === right.relation
+    (!requireSameRelation || left.relation === right.relation)
   );
 }
 
@@ -37,6 +46,7 @@ function pickLead<T extends Stitchable>(group: T[], scoreOf: (item: T) => number
 export function stitchJudgments<T extends Stitchable>(
   judgments: T[],
   scoreOf: (item: T) => number = () => 0,
+  options: StitchOptions = {},
 ): Array<T & Pick<VerseJudgment, "displayRef" | "text">> {
   if (judgments.length <= 1) {
     return judgments.map((judgment) => ({
@@ -51,7 +61,7 @@ export function stitchJudgments<T extends Stitchable>(
   for (const judgment of sorted) {
     const current = groups.at(-1);
     const previous = current?.at(-1);
-    if (previous && current && canStitch(previous, judgment)) {
+    if (previous && current && canStitch(previous, judgment, options)) {
       current.push(judgment);
     } else {
       groups.push([judgment]);

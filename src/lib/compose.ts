@@ -1,5 +1,13 @@
 import { stitchJudgments } from "./stitch.ts";
-import type { BeamChip, Candidate, ClaimVerdict, Relation, Verdict, VerseJudgment } from "./types.ts";
+import type {
+  BeamChip,
+  Candidate,
+  ClaimVerdict,
+  QuestionKind,
+  Relation,
+  Verdict,
+  VerseJudgment,
+} from "./types.ts";
 
 export const SUPPORT_THRESHOLD = 0.5;
 
@@ -10,6 +18,7 @@ export type RelationAnswer = {
 };
 
 export type RawJudgment = {
+  questionKind: QuestionKind;
   supported: number;
   denied: number;
   relations: RelationAnswer[];
@@ -33,8 +42,12 @@ export function composeVerdict(
 ): ClaimVerdict {
   const supported = raw.supported;
   const denied = raw.denied;
-  const verdict: Verdict =
-    supported >= SUPPORT_THRESHOLD && supported >= denied ? "yes" : "no";
+  const polar = raw.questionKind === "yes_no";
+  const verdict: Verdict | null = polar
+    ? supported >= SUPPORT_THRESHOLD && supported >= denied
+      ? "yes"
+      : "no"
+    : null;
 
   const judgments: VerseJudgment[] = candidates.map((candidate, index) => {
     const answer = raw.relations[index];
@@ -53,20 +66,26 @@ export function composeVerdict(
       relation: asRelation(answer?.choice ?? "silent"),
       probabilities,
       confidence: answer?.confidence ?? 0,
+      searchScore: candidate.searchScore,
     };
   });
 
-  const evidence = stitchJudgments(
-    judgments.filter(
-      (judgment) => judgment.relation !== "silent" || evidenceScore(judgment, verdict) > 0.15,
-    ),
-    (judgment) => evidenceScore(judgment, verdict),
-  )
-    .sort((a, b) => evidenceScore(b, verdict) - evidenceScore(a, verdict))
+  const scoreOf = (judgment: VerseJudgment) =>
+    verdict ? evidenceScore(judgment, verdict) : judgment.searchScore;
+
+  const filtered = verdict
+    ? judgments.filter(
+        (judgment) => judgment.relation !== "silent" || evidenceScore(judgment, verdict) > 0.15,
+      )
+    : judgments;
+
+  const evidence = stitchJudgments(filtered, scoreOf, { requireSameRelation: Boolean(verdict) })
+    .sort((a, b) => scoreOf(b) - scoreOf(a))
     .slice(0, 7);
 
   return {
     claim,
+    questionKind: polar ? "yes_no" : "free_form",
     verdict,
     supported,
     denied,
