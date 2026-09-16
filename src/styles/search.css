@@ -367,7 +367,9 @@ input[type="text"].query-input::placeholder {
 
 .results-wrapper {
   display: flex;
-  flex: 1;
+  flex: 0 1 auto;
+  align-self: stretch;
+  width: 100%;
   min-height: 0;
   border: 1px solid var(--border);
   background: var(--panel);
@@ -383,10 +385,11 @@ input[type="text"].query-input::placeholder {
 }
 
 .results {
-  flex: 1;
+  flex: 0 1 auto;
   display: flex;
   flex-direction: column;
   gap: 0;
+  width: 100%;
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
@@ -395,6 +398,10 @@ input[type="text"].query-input::placeholder {
   -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-y: contain;
+}
+
+.results-wrapper.is-empty .results {
+  flex: 1 1 auto;
 }
 
 .results::-webkit-scrollbar {
@@ -581,7 +588,7 @@ input[type="text"].query-input::placeholder {
 
   .shell > .results-wrapper {
     order: 4;
-    flex: 1 1 auto;
+    flex: 0 1 auto;
     min-height: 0;
   }
 
