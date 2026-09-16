@@ -6,9 +6,11 @@
   "description": "Yes or no, then the Berean Standard Bible verses that best support the verdict.",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node scripts/copy-corpus.mjs",
     "preview": "astro preview",
+    "start": "HOST=${HOST:-0.0.0.0} node ./dist/server/entry.mjs",
     "test": "node --experimental-strip-types --test tests/*.test.ts",
+    "typecheck": "astro check",
     "pack-bsb": "node scripts/pack-bsb.mjs"
   },
   "dependencies": {

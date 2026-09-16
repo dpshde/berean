@@ -1,0 +1,5 @@
+[build]
+builder = "RAILPACK"
+
+[deploy]
+startCommand = "HOST=${HOST:-0.0.0.0} node ./dist/server/entry.mjs"

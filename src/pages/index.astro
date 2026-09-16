@@ -1,6 +1,13 @@
 ---
+import "../styles/search.css";
 import { judgeClaim } from "../lib/verdict.ts";
 import type { ClaimVerdict } from "../lib/types.ts";
+
+const examples = [
+  "Jesus is the Word of God",
+  "God created the heavens",
+  "Love your enemies",
+];
 
 let result: ClaimVerdict | null = null;
 let error: string | null = null;
@@ -15,160 +22,233 @@ if (Astro.request.method === "POST") {
     error = err instanceof Error ? err.message : "The claim could not be judged.";
   }
 }
+
+const lens = result
+  ? [...new Set(result.evidence.map((verse) => verse.displayRef.replace(/\s+\d+:\d+$/, "")))]
+  : [];
+const hasResults = Boolean(result || error);
+const verdictLabel = result?.verdict === "yes" ? "Yes" : result ? "No" : "";
+const verdictMeta =
+  result?.verdict === "yes" ? "supported · BSB" : result ? "not supported · BSB" : "";
 ---
 
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Berean</title>
     <meta
       name="description"
       content="Ask a claim. Get yes or no from the Berean Standard Bible, then the verses that best support that verdict."
     />
-    <style>
-      :root {
-        --paper: #f4efe6;
-        --ink: #1c1914;
-        --mute: #6f675c;
-        --rule: #d8d0c2;
-      }
-      * {
-        box-sizing: border-box;
-        margin: 0;
-      }
-      html,
-      body {
-        background: var(--paper);
-        color: var(--ink);
-      }
-      body {
-        font: 22px/1.45 "Iowan Old Style", Palatino, "Palatino Linotype", Charter, Georgia, serif;
-        min-height: 100dvh;
-        padding: 12vh 1.25rem 4rem;
-      }
-      main {
-        max-width: 34rem;
-        margin: 0 auto;
-      }
-      form {
-        display: flex;
-        gap: 0.75rem;
-        align-items: baseline;
-        border-bottom: 1px solid var(--ink);
-        padding-bottom: 0.35rem;
-      }
-      input {
-        flex: 1;
-        border: 0;
-        background: transparent;
-        color: inherit;
-        font: inherit;
-        outline: none;
-        min-width: 0;
-      }
-      button {
-        border: 0;
-        background: transparent;
-        color: var(--mute);
-        font: inherit;
-        cursor: pointer;
-        padding: 0;
-      }
-      button:hover,
-      button:focus-visible {
-        color: var(--ink);
-      }
-      .verdict {
-        margin: 2.75rem 0 1.75rem;
-        font-size: clamp(4.5rem, 18vw, 8rem);
-        line-height: 0.85;
-        letter-spacing: -0.04em;
-        font-weight: 400;
-      }
-      .meta {
-        color: var(--mute);
-        font-size: 0.95rem;
-        margin: -1.1rem 0 2rem;
-      }
-      ol {
-        list-style: none;
-        padding: 0;
-        display: grid;
-        gap: 1.6rem;
-      }
-      cite {
-        display: block;
-        font-style: normal;
-        font-size: 0.82rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: var(--mute);
-        margin-bottom: 0.3rem;
-      }
-      .error,
-      .empty {
-        margin-top: 2rem;
-        color: var(--mute);
-      }
-      footer {
-        margin-top: 4rem;
-        color: var(--mute);
-        font-size: 0.85rem;
-      }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap"
+      rel="stylesheet"
+    />
+    <script is:inline>
+      (() => {
+        try {
+          const saved = localStorage.getItem("berean-theme");
+          const theme = saved === "dark" || saved === "light" ? saved : "light";
+          document.documentElement.dataset.theme = theme;
+        } catch {
+          document.documentElement.dataset.theme = "light";
+        }
+      })();
+    </script>
   </head>
   <body>
-    <main>
-      <form method="post">
-        <input
-          name="claim"
-          value={claim}
-          required
-          maxlength="400"
-          autocomplete="off"
-          autofocus
-          placeholder="a claim"
-          aria-label="Claim"
-        />
-        <button type="submit">yes or no</button>
-      </form>
+    <main class="shell">
+      <header class="header">
+        <div class="title-group">
+          <h1 class="title">Berean</h1>
+          <p class="subtitle">BSB · Jev zoom</p>
+        </div>
+        <div class="header-actions">
+          <button
+            id="themeToggle"
+            class="theme-toggle"
+            type="button"
+            aria-label="Toggle theme"
+            title="Toggle theme"
+          >
+            <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 1 0 9.8 9.8z"></path>
+            </svg>
+            <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="4"></circle>
+              <line x1="12" y1="2" x2="12" y2="5"></line>
+              <line x1="12" y1="19" x2="12" y2="22"></line>
+              <line x1="2" y1="12" x2="5" y2="12"></line>
+              <line x1="19" y1="12" x2="22" y2="12"></line>
+              <line x1="4.9" y1="4.9" x2="7" y2="7"></line>
+              <line x1="17" y1="17" x2="19.1" y2="19.1"></line>
+              <line x1="17" y1="7" x2="19.1" y2="4.9"></line>
+              <line x1="4.9" y1="19.1" x2="7" y2="17"></line>
+            </svg>
+          </button>
+        </div>
+      </header>
 
-      {error && <p class="error" role="alert">{error}</p>}
+      <section class="search-box">
+        <form id="claimForm" method="post">
+          <div class="query-row">
+            <input
+              id="queryInput"
+              class="query-input"
+              type="text"
+              name="claim"
+              value={claim}
+              required
+              maxlength="400"
+              autocomplete="off"
+              spellcheck="false"
+              autofocus
+              placeholder="Ask a claim — Jesus is the Word of God…"
+              aria-label="Claim"
+            />
+            <button
+              id="querySubmit"
+              class="query-submit"
+              type="submit"
+              aria-label="Judge claim"
+              title="Judge claim"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M7 7h10v10"></path>
+                <path d="M7 17 17 7"></path>
+              </svg>
+            </button>
+          </div>
+        </form>
+        <div class="topic-chips" aria-label="Example claims">
+          {examples.map((example) => (
+            <button class="topic-chip" type="button" data-claim={example}>
+              {example}
+            </button>
+          ))}
+        </div>
+      </section>
 
-      {result && (
-        <>
-          <p class="verdict">{result.verdict === "yes" ? "Yes" : "No"}</p>
-          <p class="meta">
-            {result.verdict === "yes" ? "supported" : "not supported"}
-            · BSB
-          </p>
-          {result.evidence.length === 0 ? (
-            <p class="empty">No verse in the shortlist addressed this claim.</p>
-          ) : (
-            <ol>
-              {result.evidence.map((verse) => (
-                <li>
-                  <cite>{verse.displayRef}</cite>
-                  <p>{verse.text}</p>
-                </li>
-              ))}
-            </ol>
+      <div
+        id="statusBar"
+        class="status-bar"
+        aria-live="polite"
+        hidden={!hasResults}
+      >
+        <div class="search-status">
+          {error && (
+            <span class="search-status-badge error-text" role="alert">{error}</span>
           )}
-        </>
-      )}
+          {result && (
+            <>
+              <span class:list={["search-status-badge", `search-status-badge--${result.verdict}`]}>
+                {verdictLabel}
+              </span>
+              <span class="search-status-meta">{verdictMeta}</span>
+            </>
+          )}
+        </div>
+        {lens.length > 0 && (
+          <div class="lens" aria-label="Books in the shortlist">
+            {lens.map((book) => (
+              <span class="lens-chip">{book}</span>
+            ))}
+          </div>
+        )}
+      </div>
 
-      <footer>Berean Standard Bible. Scripture judges the claim.</footer>
+      <div class:list={["results-wrapper", { "is-empty": !result }]}>
+        <section class="results" aria-live="polite">
+          {!result && !error && (
+            <div class="empty-state-enhanced">
+              <p class="empty-state-enhanced__title">Ask a claim. Scripture answers.</p>
+              <p class="empty-state-enhanced__hint">
+                MiniSearch shortlists verses. Jev judges support or denial. The page prints the
+                verdict, then the evidence.
+              </p>
+            </div>
+          )}
+          {result && result.evidence.length === 0 && (
+            <div class="empty-state-enhanced">
+              <p class="empty-state-enhanced__title">No verse in the shortlist addressed this claim.</p>
+            </div>
+          )}
+          {result?.evidence.map((verse) => (
+            <article class="card">
+              <cite class="card__ref">{verse.displayRef}</cite>
+              <p class="card__text">{verse.text}</p>
+              <span class:list={["card__relation", `card__relation--${verse.relation}`]}>
+                {verse.relation}
+              </span>
+            </article>
+          ))}
+        </section>
+      </div>
+
+      <div class="results-footer-shell">
+        <footer class="results-footer">
+          <p class="health-badge">Berean Standard Bible. Scripture judges the claim.</p>
+        </footer>
+      </div>
     </main>
     <script>
-      const form = document.querySelector("form");
-      const button = document.querySelector("button");
-      form?.addEventListener("submit", () => {
-        if (button) {
-          button.disabled = true;
-          button.textContent = "…";
+      const form = document.getElementById("claimForm");
+      const input = document.getElementById("queryInput");
+      const submit = document.getElementById("querySubmit");
+      const themeToggle = document.getElementById("themeToggle");
+      const statusBar = document.getElementById("statusBar");
+
+      const syncThemeButton = () => {
+        if (!themeToggle) return;
+        themeToggle.dataset.theme = document.documentElement.dataset.theme ?? "light";
+      };
+      syncThemeButton();
+
+      themeToggle?.addEventListener("click", () => {
+        const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+        document.documentElement.dataset.theme = next;
+        themeToggle.dataset.theme = next;
+        try {
+          localStorage.setItem("berean-theme", next);
+        } catch {
+          /* ignore quota / private mode */
         }
       });
+
+      const setLoading = () => {
+        if (submit instanceof HTMLButtonElement) {
+          submit.disabled = true;
+          submit.classList.add("is-loading");
+          submit.setAttribute("aria-busy", "true");
+        }
+        if (statusBar) {
+          statusBar.hidden = false;
+          statusBar.innerHTML =
+            '<div class="search-status"><span class="search-status-badge search-status-badge--loading">Judging…</span></div>';
+        }
+      };
+
+      form?.addEventListener("submit", setLoading);
+
+      for (const chip of document.querySelectorAll("[data-claim]")) {
+        chip.addEventListener("click", () => {
+          if (!(input instanceof HTMLInputElement) || !(form instanceof HTMLFormElement)) return;
+          input.value = chip.getAttribute("data-claim") ?? "";
+          if (form.requestSubmit) form.requestSubmit();
+          else form.submit();
+        });
+      }
     </script>
   </body>
 </html>
