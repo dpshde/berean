@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { loadVerses } from "../src/lib/bsb.ts";
-import { retrieve, retrieveFrom } from "../src/lib/search.ts";
+import { numericQueryVariants, retrieve, retrieveFrom } from "../src/lib/search.ts";
 import type { Verse } from "../src/lib/types.ts";
 
 const verses: Verse[] = [
@@ -41,6 +41,19 @@ test("retrieves creation for a creation claim", () => {
 test("lexical recall finds many lust verses", () => {
   const hits = retrieve("lust", 80);
   assert.ok(hits.length > 3, `expected more than 3 hits, got ${hits.length}`);
+});
+
+test("numericQueryVariants expands digits to cardinal and ordinal words", () => {
+  assert.deepEqual(numericQueryVariants("4 in the fire"), ["four in the fire", "fourth in the fire"]);
+  assert.deepEqual(numericQueryVariants("4th in the fire"), ["four in the fire", "fourth in the fire"]);
+  assert.deepEqual(numericQueryVariants("love"), []);
+});
+
+test("lexical recall finds Daniel 3:25 for 4 in the fire", () => {
+  const hits = retrieve("4 in the fire", 20);
+  const ids = hits.map((hit) => hit.id);
+  assert.ok(ids.includes("Dan.3.25"), `expected Dan.3.25 in top 20, got ${ids.slice(0, 8).join(", ")}`);
+  assert.ok((ids.indexOf("Dan.3.25") ?? 99) < 5, `expected Dan.3.25 near the top, ranked ${ids.indexOf("Dan.3.25")}`);
 });
 
 test("packs the full BSB", () => {

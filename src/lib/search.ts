@@ -40,11 +40,53 @@ const STOP = new Set([
 
 let index: MiniSearch<Verse> | null = null;
 
+const NUMBER_WORDS: Record<string, { cardinal: string; ordinal: string }> = {
+  "1": { cardinal: "one", ordinal: "first" },
+  "2": { cardinal: "two", ordinal: "second" },
+  "3": { cardinal: "three", ordinal: "third" },
+  "4": { cardinal: "four", ordinal: "fourth" },
+  "5": { cardinal: "five", ordinal: "fifth" },
+  "6": { cardinal: "six", ordinal: "sixth" },
+  "7": { cardinal: "seven", ordinal: "seventh" },
+  "8": { cardinal: "eight", ordinal: "eighth" },
+  "9": { cardinal: "nine", ordinal: "ninth" },
+  "10": { cardinal: "ten", ordinal: "tenth" },
+  "11": { cardinal: "eleven", ordinal: "eleventh" },
+  "12": { cardinal: "twelve", ordinal: "twelfth" },
+};
+
+function numberToken(): RegExp {
+  return /\b(\d{1,2})(?:st|nd|rd|th)?\b/gi;
+}
+
 function significantTerms(claim: string): string[] {
   return claim
     .toLowerCase()
     .split(/[^a-z0-9]+/)
     .filter((word) => word.length > 2 && !STOP.has(word));
+}
+
+/** Turn `4` / `4th` into separate `four` and `fourth` queries. MiniSearch drops bare digits. */
+export function numericQueryVariants(claim: string): string[] {
+  const variants = new Set<string>();
+  const cardinal = claim.replace(numberToken(), (match, digits: string) => NUMBER_WORDS[digits]?.cardinal ?? match);
+  const ordinal = claim.replace(numberToken(), (match, digits: string) => NUMBER_WORDS[digits]?.ordinal ?? match);
+  if (cardinal !== claim) variants.add(cardinal);
+  if (ordinal !== claim && ordinal !== cardinal) variants.add(ordinal);
+  return [...variants];
+}
+
+function collectScores(mini: MiniSearch<Verse>, claim: string, scores: Map<string, number>): void {
+  for (const variant of [claim, ...numericQueryVariants(claim)]) {
+    for (const hit of mini.search(variant)) {
+      scores.set(String(hit.id), Math.max(scores.get(String(hit.id)) ?? 0, hit.score));
+    }
+    const keyword = significantTerms(variant).join(" ");
+    if (!keyword) continue;
+    for (const hit of mini.search(keyword, { combineWith: "AND" })) {
+      scores.set(String(hit.id), Math.max(scores.get(String(hit.id)) ?? 0, hit.score * 2));
+    }
+  }
 }
 
 function getIndex(): MiniSearch<Verse> {
@@ -78,19 +120,8 @@ function toCandidate(id: string, searchScore: number): Candidate | null {
 }
 
 export function retrieve(claim: string, limit = SHORTLIST): Candidate[] {
-  const mini = getIndex();
-  const terms = significantTerms(claim);
-  const keyword = terms.join(" ");
   const scores = new Map<string, number>();
-
-  for (const hit of mini.search(claim)) {
-    scores.set(String(hit.id), hit.score);
-  }
-  if (keyword) {
-    for (const hit of mini.search(keyword, { combineWith: "AND" })) {
-      scores.set(String(hit.id), Math.max(scores.get(String(hit.id)) ?? 0, hit.score * 2));
-    }
-  }
+  collectScores(getIndex(), claim, scores);
 
   return [...scores.entries()]
     .sort((a, b) => b[1] - a[1])
@@ -112,15 +143,24 @@ export function retrieveFrom(
     idField: "id",
   });
   mini.addAll(verses);
-  return mini.search(claim).slice(0, limit).map((hit) => {
-    const verse = hit as unknown as Verse;
-    return {
-      ...verse,
-      displayRef: displayRef(verse),
-      context: "",
-      searchScore: hit.score,
-      sourceScore: hit.score,
-      lanes: ["lexical"],
-    };
-  });
+  const scores = new Map<string, number>();
+  collectScores(mini, claim, scores);
+  const byId = new Map(verses.map((verse) => [verse.id, verse]));
+  return [...scores.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit)
+    .flatMap(([id, searchScore]) => {
+      const verse = byId.get(id);
+      if (!verse) return [];
+      return [
+        {
+          ...verse,
+          displayRef: displayRef(verse),
+          context: "",
+          searchScore,
+          sourceScore: searchScore,
+          lanes: ["lexical"] as const,
+        },
+      ];
+    });
 }
