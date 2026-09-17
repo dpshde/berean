@@ -10,7 +10,7 @@ import {
   rootCandidate,
   type FrontierRequest,
 } from "../src/lib/beam.ts";
-import { buildCanon, childrenOf, formatPath, verseAt } from "../src/lib/canon.ts";
+import { buildCanon, childrenOf, formatPath, verseAt, versesAtChapter } from "../src/lib/canon.ts";
 import type { CanonTree } from "../src/lib/canon.ts";
 
 test("geometric-mean path score matches the cookbook", () => {
@@ -101,4 +101,13 @@ test("canon children follow Book → Chapter → Verse", () => {
   assert.ok(childrenOf(canon.tree, ["John", "3"]).includes("16"));
   assert.equal(verseAt(canon, ["John", "3", "16"])?.id, "John.3.16");
   assert.equal(formatPath(["John", "3", "16"]), "John 3:16");
+});
+
+test("versesAtChapter returns the chapter in corpus order", () => {
+  const canon = buildCanon();
+  const john3 = versesAtChapter(canon, ["John", "3"]);
+  assert.equal(john3.length, 36);
+  assert.equal(john3[0]?.id, "John.3.1");
+  assert.equal(john3[15]?.id, "John.3.16");
+  assert.deepEqual(versesAtChapter(canon, ["John"]), []);
 });

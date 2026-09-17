@@ -52,6 +52,15 @@ export function verseAt(canon: Canon, path: readonly string[]): Verse | undefine
   return canon.byPath.get(verseKey(book, chapter, verse));
 }
 
+/** Verses of one chapter, in corpus order. `path` is `[book, chapter]`. */
+export function versesAtChapter(canon: Canon, path: readonly string[]): Verse[] {
+  if (path.length !== 2) return [];
+  return childrenOf(canon.tree, path).flatMap((label) => {
+    const verse = verseAt(canon, [...path, label]);
+    return verse ? [verse] : [];
+  });
+}
+
 export function formatPath(path: readonly string[]): string {
   if (path.length === 0) return "Canon";
   if (path.length === 1) return path[0] ?? "";

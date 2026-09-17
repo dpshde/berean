@@ -21,7 +21,7 @@ The key stays on the server. Get one at https://console.typesafe.ai
 
 ## How it decides
 
-1. Zoom the packed BSB (`data/bsb.json`) Book → Chapter → Verse with Jev Choice and a width-3 beam (`path_score = product(edge_p) ** (1 / decisions)`).
+1. Zoom the packed BSB (`data/bsb.json`) Book → Chapter with Jev Choice, then search each retained chapter as a tagged passage (Choice over verse IDs + exists Noul; `edge_p *= exists`). Width-3 beam (`path_score = product(edge_p) ** (1 / decisions)`).
 2. Ask TypeSafe, in one call, about the retained leaf verses:
    - does this scripture support the claim?
    - does it deny the claim?
